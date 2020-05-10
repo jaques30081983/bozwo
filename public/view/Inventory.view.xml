@@ -1,0 +1,946 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.Inventory"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:dnd="sap.ui.core.dnd">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+<l:ResponsiveSplitter defaultPane="default">
+		<l:PaneContainer >
+			<l:SplitPane requiredParentWidth="400" id="default" >
+				<Panel height="100%" >
+					<headerToolbar>
+						<Toolbar height="3rem">
+								<Title text="{i18n>category}"/>
+							<ToolbarSpacer />
+								<Button icon="sap-icon://write-new" press="onNewCategory" tooltip="{i18n>new}"/>
+								<Button icon="sap-icon://add-product" press="onNewItem" tooltip="{i18n>new}"/>
+								<ToggleButton id="deleteButton" icon="sap-icon://delete" press="onDeleteMode"/>
+						</Toolbar>
+					</headerToolbar>
+				
+					<SearchField
+			            width="auto"
+			            value="{search>/query}"
+			            liveChange=".onLiveChange"
+			          />
+
+					<Tree
+					    id="Tree"
+					    delete="onPressDelete"
+					    items="{path: 'inventoryTree>/',
+				          events: {
+				            change: '.onTreeChange'
+				          },
+				          sorter: {path : 'name'}
+				          }"
+				          
+				          >
+					    	<dragDropConfig>
+								<dnd:DragDropInfo
+										sourceAggregation="items"
+										targetAggregation="items"
+										dropEffect="Move"
+										dragStart="onDragStart"
+										dragEnter="onDragEnter"
+										dropPosition="On"
+										drop="onDrop"
+										
+										/>
+								
+								<dnd:DragDropInfo
+									sourceAggregation="items"
+
+									dropEffect="Copy"
+									dropPosition="On"
+									dragStart="onDragStart"
+									dragEnter="onDragEnter"
+									drop="onTreeToRefListDrop"
+									targetElement="ref_items"
+									/>		
+
+								<dnd:DragDropInfo
+									sourceAggregation="items"
+
+									dropEffect="Copy"
+									dropPosition="On"
+									dragStart="onDragStart"
+									dragEnter="onDragEnter"
+									drop="onTreeToLinkedListDrop"
+									targetElement="linked_items"
+									/>
+										
+								<dnd:DragDropInfo
+									sourceAggregation="items"
+
+									dropEffect="Copy"
+									dropPosition="On"
+									dragStart="onDragStart"
+									dragEnter="onDragEnter"
+									drop="onTreeToAlternativesListDrop"
+									targetElement="alternatives_items"
+									/>	
+									
+										
+							</dragDropConfig>
+						<StandardTreeItem 
+							type="Navigation"
+							press="onPressTree" 
+							
+							app:id="{inventoryTree>id}"  
+							app:category_id="{inventoryTree>category_id}"
+							app:depth="{inventoryTree>depth}" 
+							
+							title="{inventoryTree>name}" 
+							icon="{inventoryTree>icon}" 
+							tooltip="{inventoryTree>description}">
+							 <customData>
+							  <core:CustomData key="mydata" value="{=${inventoryTree>category_id} > 0  ? 'Normal' : 'Bold'}" writeToDom="true" />
+							 </customData>
+							
+							</StandardTreeItem>
+					</Tree>
+				</Panel>
+				<l:layoutData>
+						  	<l:SplitterLayoutData resizable="true" size="350px"/>
+				</l:layoutData>
+			</l:SplitPane>
+			<l:PaneContainer orientation="Vertical">
+			
+		<l:SplitPane  requiredParentWidth="800">			
+				
+		<NavContainer
+			id="inventoryNavCon"
+			
+			>		
+		<Page id="messagePage">
+			<customHeader>
+				<Toolbar id="TB0">
+					<Title text="{i18n>item}" level="H4" titleStyle="H4"/>
+					<ToolbarSpacer />
+					
+					<Button icon="sap-icon://add-product" press="onNewItem" tooltip="{i18n>new}"/>
+					
+				</Toolbar>
+			</customHeader>
+			<content>
+			<MessagePage  showHeader="false" icon="sap-icon://product">
+			
+			</MessagePage>
+		</content>
+		
+		</Page>
+		<Page id="categoryPage">
+			<customHeader>
+				<Toolbar id="TB1">
+					<Title text="{i18n>category}" level="H4" titleStyle="H4"/>
+					<ToolbarSpacer />
+					<Button icon="sap-icon://save" press="onSaveCategory"/>
+					<Button icon="sap-icon://duplicate" press="onDuplicateCategory" tooltip="{i18n>duplicate}"/>
+					
+					
+				</Toolbar>
+			</customHeader>
+			<content>
+				<ObjectHeader
+					icon="{category>/icon}"
+					title="{category>/name}"
+					backgroundDesign="Solid" >
+				</ObjectHeader>
+				<f:SimpleForm
+					minWidth="1024"
+					maxContainerCols="2"
+					editable="true"
+					layout="ResponsiveGridLayout" >
+
+					<Label text="{i18n>name}" />
+					<Input value="{category>/name}">
+					</Input>
+					
+					<Label text="{i18n>description}" />
+					<Input value="{category>/description}">
+					</Input>
+					
+					<Label text="{i18n>icon}" />
+					<Input value="{category>/icon}">
+					</Input>
+					<Label text="Icon browser"/>
+					<Link
+						text="Open icon browser"
+						target="_blank"
+						href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" 
+					/>
+					
+				</f:SimpleForm>
+			</content>
+		</Page>
+		
+		<Page id="itemPage">
+				
+			<customHeader>
+				<Toolbar id="TB2">
+					<Title text="{i18n>item}" level="H4" titleStyle="H4"/>
+					<ToolbarSpacer />
+					<Button icon="sap-icon://save" press="onSaveItem"/>
+					<Button icon="sap-icon://duplicate" press="onDuplicateItem" tooltip="{i18n>duplicate}"/>
+					
+					
+				</Toolbar>
+			</customHeader>
+			<content>
+				<ObjectHeader
+					title="{inventory>/number} - {inventory>/name}"
+					backgroundDesign="Translucent"
+					 >
+					<attributes>
+						<ObjectAttribute title="{i18n>weight}" text="{inventory>/weight} kg" />
+						<ObjectAttribute title="{i18n>dimensions}" text="{inventory>/width} x {inventory>/depth} X {inventory>/height}m, {inventory>/volume}m³" />
+					</attributes>
+					<statuses>  
+
+						<ObjectStatus 
+						title="{i18n>rentalStock}" 
+						text="{inventory>/rental_stock}" 
+						state="{=${inventory>/rental_stock} &lt; ${inventory>/min_rental_stock}  ? 'Error' : 'Success'}"
+						/>
+						<ObjectStatus 
+						title="{i18n>salesStock}" 
+						text="{inventory>/sales_stock}" 
+						state="{=${inventory>/sales_stock} &lt; ${inventory>/min_sales_stock}  ? 'Error' : 'Success'}"
+						/>
+					</statuses>
+				</ObjectHeader>
+					<IconTabBar
+						
+						
+						class="sapUiResponsiveContentPadding">
+						<items>
+	
+							<IconTabFilter
+								text="{i18n>general}">
+								<ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+								<Toolbar>
+									<Title text="{i18n>general}" level="H5" titleStyle="H5"/>
+									<ToolbarSpacer />
+									<core:Icon src="sap-icon://product" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+								</Toolbar>
+									<Label text="{i18n>name}" />
+								<Input value="{inventory>/name}">
+								</Input>
+								
+								<Label text="{i18n>description}" />
+								<Input value="{inventory>/description}">
+								</Input>
+								
+								<Label text="{i18n>owner}" />
+								<Select width="100%" items="{masterdata>/}" 	selectedKey="{inventory>/masterdata_id}">
+									<core:Item key="{masterdata>id}" text="{masterdata>company_name_1} {masterdata>company_name_2} {masterdata>first_name} {masterdata>last_name}" />
+								</Select>
+								
+								<Label text="{i18n>notes}" />
+								<TextArea value="{inventory>/notes}">
+								</TextArea>
+								
+								<Label text="{i18n>unit}" />
+								<Select width="100%" items="{units>/}" 	selectedKey="{inventory>/unit_id}">
+									<core:Item key="{units>id}" text="{units>name}" />
+								</Select>
+								<Label text="{i18n>disabled}" />
+								<CheckBox selected="{path: 'inventory>/disabled', type: 'sap.ui.model.type.Boolean'}"/>	
+								</f:SimpleForm>
+								</ScrollContainer>
+							</IconTabFilter>
+							<IconTabFilter
+								text="{i18n>details}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+								<Toolbar>
+									<Title text="{i18n>dimensionsWeight}" level="H5" titleStyle="H5"/>
+									<ToolbarSpacer />
+									<core:Icon src="sap-icon://hint" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+								</Toolbar>
+			
+								<Label text="{i18n>weight} (kg)" />
+								<Input value="{inventory>/weight}" type="Number">
+								</Input>
+								
+								<Label text="{i18n>width} (m)" />
+								<Input value="{inventory>/width}" type="Number">
+								</Input>
+								
+								<Label text="{i18n>height} (m)" />
+								<Input value="{inventory>/height}" type="Number">
+								</Input>
+								
+								<Label text="{i18n>depth} (m)" />
+								<Input value="{inventory>/depth}" type="Number">
+								</Input>		
+								
+								<Label text="{i18n>volume} (m³)" />
+								<Input value="{inventory>/volume}"  type="Number">
+								</Input>		
+								
+								<Toolbar>
+									<Title text="{i18n>energy}" level="H5" titleStyle="H5"/>
+									<ToolbarSpacer />
+									<core:Icon src="sap-icon://disconnected" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+								</Toolbar>
+								
+								<Label text="{i18n>apparentPower} (VA)" />
+								<Input value="{inventory>/apparent_power}" type="Number">
+								</Input>	
+								
+								<Label text="{i18n>realPower} (W)" />
+								<Input value="{inventory>/real_power}" type="Number">
+								</Input>		
+		
+								<Label text="{i18n>powerConnectors}" />
+								<Select width="100%" items="{power_connectors>/}" 	selectedKey="{inventory>/power_connector_id}">
+									<core:Item key="{power_connectors>id}" text="{power_connectors>name}" />
+								</Select>						
+									
+								<Toolbar>
+									<Title text="{i18n>customs}" level="H5" titleStyle="H5"/>
+									<ToolbarSpacer />
+									<core:Icon src="sap-icon://badge" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+								</Toolbar>	
+									
+								<Label text="{i18n>originCountry}" />
+								<Select width="100%" items="{countries>/}" 	selectedKey="{inventory>/country_id}">
+									<core:Item key="{countries>id}" text="{countries>name}" />
+								</Select>	
+									
+								<Label text="{i18n>customsTariffNumber}" />
+								<Input value="{inventory>/customs_tariff_number}">
+								</Input>
+								</f:SimpleForm>
+								</ScrollContainer>
+							</IconTabFilter>
+							<IconTabFilter
+								text="{i18n>price}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									<Toolbar>
+										<Title text="{i18n>price}" level="H5" titleStyle="H5"/>
+										<ToolbarSpacer />
+										<core:Icon src="sap-icon://lead" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+									</Toolbar>	
+			
+									<Label text="{i18n>purchasePrice}" />
+									<Input value="{inventory>/purchase_price}" type="Number">
+									</Input>
+										
+									<Label text="{i18n>salesPrice}" />
+									<Input value="{inventory>/sales_price}" type="Number">
+									</Input>
+									
+									<Label text="{i18n>subHiresPrice}" />
+									<Input value="{inventory>/sub_hire_price}" type="Number">
+									</Input>	
+									
+									<Label text="{i18n>calculatedCosts}" />
+									<Input value="{inventory>/calculated_costs}" type="Number">
+									</Input>
+									
+									<Label text="{i18n>rentalPrice}" />
+									<Input value="{inventory>/rental_price}" type="Number">
+									</Input>
+			
+									<Label text="{i18n>currencies}" />
+									<Select width="100%" items="{currencies>/}" 	selectedKey="{inventory>/currency_id}">
+										<core:Item key="{currencies>id}" text="{currencies>name}" />
+									</Select>	
+			
+									<Label text="{i18n>tax}" />
+									<Select width="100%" items="{taxes>/}" 	selectedKey="{inventory>/tax_id}">
+										<core:Item key="{taxes>id}" text="{taxes>name}" />
+									</Select>
+												
+									<Label text="{i18n>noDiscount}" />
+									<CheckBox selected="{path: 'inventory>/no_discount', type: 'sap.ui.model.type.Boolean'}"/>	
+									
+								</f:SimpleForm>
+								</ScrollContainer>
+							</IconTabFilter>
+							
+							<IconTabFilter
+								text="{i18n>stock}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									<Toolbar>
+										<Title text="{i18n>stock}" level="H5" titleStyle="H5"/>
+										<ToolbarSpacer />
+										<core:Icon src="sap-icon://shelf" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+									</Toolbar>	
+									
+									
+									<Label text="{i18n>quantity}" />
+									<Input value="{inventory>/quantity}" type="Number">
+									</Input>
+			
+									<Label text="{i18n>packagingUnit}" />
+									<Input value="{inventory>/packaging_unit}" type="Number">
+									</Input>
+									
+									<Label text="{i18n>rentalStock}" />
+									<Input value="{inventory>/rental_stock}" type="Number">
+									</Input>
+									
+									<Label text="{i18n>salesStock}" />
+									<Input value="{inventory>/sales_stock}" type="Number">
+									</Input>
+												
+									<Label text="{i18n>minRentalStock}" />
+									<Input value="{inventory>/min_rental_stock}" type="Number">
+									</Input>
+									
+									<Label text="{i18n>minSalesStock}" />
+									<Input value="{inventory>/min_sales_stock}" type="Number">
+									</Input>			
+									
+									<Toolbar>
+										<Title text="{i18n>barcode}" level="H5" titleStyle="H5"/>
+										<ToolbarSpacer />
+										<core:Icon src="sap-icon://bar-code" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+									</Toolbar>	
+			
+									<Label text="{i18n>barcode}" />
+									<Input value="{inventory>/barcode}">
+									</Input>
+								</f:SimpleForm>
+								</ScrollContainer>
+							</IconTabFilter>
+							
+							<IconTabFilter
+								text="{i18n>associatedItems}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									<Toolbar>
+										<Title text="{i18n>standardAssociatedItems}" level="H5" titleStyle="H5"/>
+										<ToolbarSpacer />
+										<core:Icon src="sap-icon://broken-link" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+									</Toolbar>	
+									
+									<List 
+										id="ref_items" 
+										mode="Delete" 
+										items="{path: 'standard_associated_items>/'}"
+										delete="onPressRefListDelete"
+										>
+			
+										
+									<InputListItem 
+										label="{standard_associated_items>name}"
+										app:refListItemId="{standard_associated_items>id}"
+										>
+										<Input
+											width="10vw"
+											placeholder="{i18n>quantity}"
+											value="{standard_associated_items>pivot/quantity}"
+											liveChange="onLiveChangeRefListItem"
+											app:refListItemId="{standard_associated_items>id}"
+											type="Number" />
+									</InputListItem>
+									</List>
+									
+									
+									<Toolbar>
+										<Title text="{i18n>linkedAssociatedItems}" level="H5" titleStyle="H5"/>
+										<ToolbarSpacer />
+										<core:Icon src="sap-icon://chain-link" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+									</Toolbar>	
+									
+									<List id="linked_items" mode="Delete" items="{path: 'linked_associated_items>/'}" delete="onPressLinkedListDelete">
+					
+										
+									<InputListItem label="{linked_associated_items>name}"
+										app:linkedListItemId="{linked_associated_items>id}"
+									>
+										<Input
+											width="10vw"
+											placeholder="{i18n>quantity}"
+											value="{linked_associated_items>pivot/quantity}"
+											liveChange="onLiveChangeLinkedListItem"
+											app:linkedListItemId="{linked_associated_items>id}"
+											type="Number" />
+									</InputListItem>
+									</List>
+									
+								</f:SimpleForm>
+								</ScrollContainer>
+							</IconTabFilter>
+							
+							<IconTabFilter
+								text="{i18n>alternatives}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									
+									<Toolbar>
+										<Title text="{i18n>alternatives}" level="H5" titleStyle="H5"/>
+										<ToolbarSpacer />
+										<core:Icon src="sap-icon://journey-change" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+									</Toolbar>	
+									
+									<List id="alternatives_items" mode="Delete" items="{path: 'alternatives_items>/'}" delete="onPressAlternativesListDelete">
+					
+										
+									<InputListItem 
+										label="{alternatives_items>name}" 
+										app:alternativesListItemId="{alternatives_items>id}"
+									>
+										
+									</InputListItem>
+									</List>
+									
+								</f:SimpleForm>
+								</ScrollContainer>
+							</IconTabFilter>
+							
+							<IconTabFilter
+								text="{i18n>devices}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									
+						<Toolbar>
+							<Title text="{i18n>devices}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://add-equipment" press="onNewDevice"/>
+						</Toolbar>
+						
+						<Table
+							id="deviceTable"	
+							mode="Navigation"
+							inset="false"
+							includeItemInSelection="true"
+							alternateRowColors="true"
+							items="{
+									path: 'devices>/',
+									sorter: {
+									path: 'id'
+									}
+						}">
+						
+							<columns>
+								<Column
+									
+								>
+									<Text text="{i18n>entry}" />
+								</Column>
+								<Column
+									hAlign="Center"
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									>
+									<Text text="{i18n>deletion}" />
+								</Column>
+								<Column
+									hAlign="Center"
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									>
+									<Text text="{i18n>serialNumber}" />
+								</Column>
+								<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="Center">
+									<Text text="{i18n>inventoryNumber}" />
+								</Column>
+								<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="End">
+									<Text text="{i18n>sequenceNumber}" />
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem vAlign="Middle"
+									press="onEditDevice"
+									app:deviceListItemId="{devices>id}"
+									type="Active"
+								>
+								
+									<cells
+										
+									>
+										<Label text="{devices>inventory_entry}"/>
+										<Label text="{devices>inventory_deletion}"/>
+										<Label text="{devices>serial_number}"/>
+										<Label text="{devices>inventory_number}"/>
+										<Label text="{devices>sequence_number}"/>
+										
+										
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+									
+									
+								</f:SimpleForm>
+								</ScrollContainer>
+							</IconTabFilter>
+							
+							<IconTabFilter
+								text="{i18n>inventory}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									
+									<Toolbar>
+										<Title text="{i18n>inventoryHistory}" level="H5" titleStyle="H5"/>
+										<ToolbarSpacer />
+										<Button icon="sap-icon://create-form" press="onNewInventoryHistory"/>
+									</Toolbar>
+									
+									<Table
+										id="inventoryHistoryTable"	
+										mode="Navigation"
+										inset="false"
+										includeItemInSelection="true"
+										alternateRowColors="true"
+										items="{
+												path: 'histories>/',
+												sorter: {
+												path: 'id'
+												}
+									}">
+									
+										<columns>
+											<Column>
+												<Text text="{i18n>type}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true"
+												 width="130px"
+											>
+												<Text text="{i18n>date}" />
+											</Column>
+											<Column
+												hAlign="End"
+												minScreenWidth="Tablet"
+												demandPopin="true"
+												>
+												<Text text="{i18n>quantity}" />
+											</Column>
+											<Column
+												
+												minScreenWidth="Tablet"
+												
+												>
+												<Text text="{i18n>inventoryType}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true"
+												>
+												<Text text="{i18n>description}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true"
+												>
+												<Text text="{i18n>manager}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true"
+												>
+												<Text text="{i18n>itemType}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true"
+												hAlign="End">
+												<Text text="{i18n>jobNumber}" />
+											</Column>
+											<Column
+												minScreenWidth="Tablet"
+												demandPopin="true"
+												>
+												<Text text="{i18n>job}" />
+											</Column>
+											
+											
+											
+										</columns>
+										<items>
+											<ColumnListItem vAlign="Middle"
+												press="onEditHistory"
+												app:historyListItemId="{histories>id}"
+												type="Active"
+											>
+											
+												<cells
+													
+												>
+													<Label text="{histories>type}"/>
+													<Label text="{histories>date_time}"/>
+													<Label text="{histories>quantity}"/>
+													<Label text="{histories>inventory_type}"/>
+													<Label text="{histories>description}"/>
+													<Label text="{histories>created_user_id}"/>
+													<Label text="{histories>item_type}"/>
+													<Label text="{histories>job_number}"/>
+													<Label text="{histories>job_name}"/>
+													
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+									
+								</f:SimpleForm>
+								</ScrollContainer>
+							</IconTabFilter>
+							
+							<IconTabFilter
+								text="{i18n>supplier}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									
+									<Toolbar>
+										<Title text="{i18n>supplier}" level="H5" titleStyle="H5"/>
+										<ToolbarSpacer />
+										<core:Icon src="sap-icon://supplier" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+									</Toolbar>	
+									
+									<List id="supplier" mode="MultiSelect" items="{path: 'masterdata_supplier>/'}" >
+					
+										
+									<InputListItem label="{masterdata_supplier>company_name_1}">
+
+									</InputListItem>
+									</List>
+									
+									
+								</f:SimpleForm>
+								</ScrollContainer>
+								</IconTabFilter>
+								
+								<IconTabFilter
+								text="{i18n>priceList}">
+								 <ScrollContainer
+							        horizontal="false"
+							        vertical="true"
+							        height="100%"
+							      >
+								<f:SimpleForm
+									minWidth="1024"
+									maxContainerCols="2"
+									editable="true"
+									layout="ResponsiveGridLayout" >
+									
+									<Label text="{i18n>puplish}" />
+									<CheckBox selected="{path: 'inventory>/puplish', type: 'sap.ui.model.type.Boolean'}"/>	
+									
+									<Label text="{i18n>priceListOrder}" />
+									<Input value="{inventory>/price_list_order}" type="Number">
+									</Input>
+									
+								</f:SimpleForm>
+								</ScrollContainer>
+								</IconTabFilter>
+						</items>
+				</IconTabBar>
+				
+			</content>
+		</Page>
+				<Page id="devicePage">
+				
+			<customHeader>
+				<Toolbar>
+					<Title text="{i18n>device}" level="H4" titleStyle="H4"/>
+					<ToolbarSpacer />
+					<Button icon="sap-icon://save" press="onSaveDevice"/>
+				</Toolbar>
+			</customHeader>
+			<content>
+				<f:SimpleForm
+					minWidth="1024"
+					maxContainerCols="2"
+					editable="true"
+					layout="ResponsiveGridLayout" >
+					<Toolbar>
+						<Title text="{i18n>dates}" level="H5" titleStyle="H5"/>
+						<ToolbarSpacer />
+						<core:Icon src="sap-icon://wrench" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+					</Toolbar>	
+					<Label text="{i18n>entry}" />
+					<Select width="100%" items="{histories>/}" forceSelection="false" 	selectedKey="{device>/inventory_history_entry_id}">
+							<core:Item key="{histories>id}" text="{histories>date_time} / {histories>type}" />
+					</Select>
+
+					<Label text="{i18n>deletion}"/>
+					<Select width="100%" items="{histories>/}" forceSelection="false" 	selectedKey="{device>/inventory_history_deletion_id}">
+							<core:Item key="{histories>id}" text="{histories>date_time} / {histories>type}" />
+					</Select>
+					
+					<Label text="{i18n>warrantyEnd}" />
+					<DateTimePicker valueFormat="yyyy-MM-dd-HH-mm-ss" value="{device>/warranty_end}"/>
+					
+					
+					<Toolbar>
+						<Title text="{i18n>numbers}" level="H5" titleStyle="H5"/>
+						<ToolbarSpacer />
+						<core:Icon src="sap-icon://wrench" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+					</Toolbar>	
+					
+					<Label text="{i18n>serialNumber}" />
+					<Input value="{device>/serial_number}" type="Number">
+					</Input>
+					
+					<Label text="{i18n>inventoryNumber}" />
+					<Input value="{device>/inventory_number}" type="Number">
+					</Input>
+								
+					<Label text="{i18n>sequenceNumber}" />
+					<Input value="{device>/sequence_number}" type="Number">
+					</Input>
+					
+					<Label text="{i18n>barcode}" />
+					<Input value="{device>/barcode}" type="Number">
+					</Input>	
+					
+					<Toolbar>
+						<Title text="{i18n>details}" level="H5" titleStyle="H5"/>
+						<ToolbarSpacer />
+						<core:Icon src="sap-icon://wrench" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+					</Toolbar>	
+					
+					<Label text="{i18n>owner}" />
+					<Select width="100%" items="{masterdata>/}" 	selectedKey="{device>/owner_id}">
+							<core:Item key="{masterdata>id}" text="{masterdata>company_name_1}" />
+					</Select>
+					
+					<Label text="{i18n>purchasePrice}" />
+					<Input value="{device>/purchase_price}" type="Number">
+					</Input>
+					
+					<Label text="{i18n>supplier}" />
+					<Select width="100%" items="{masterdata>/}" 	selectedKey="{device>/supplier_id}">
+							<core:Item key="{masterdata>id}" text="{masterdata>company_name_1}" />
+					</Select>
+					
+					<Label text="{i18n>deviceField} 1"/>
+					<Input value="{device>/device_field_1}" type="Number">
+					</Input>	
+					
+					<Label text="{i18n>deviceField} 2" />
+					<Input value="{device>/device_field_2}" type="Number">
+					</Input>
+					
+					<Toolbar>
+						<Title text="{i18n>use}" level="H5" titleStyle="H5"/>
+						<ToolbarSpacer />
+						<core:Icon src="sap-icon://wrench" class="sapMBtnCustomIcon sapMBtnIcon sapMBtnIconLeft sapUiIcon sapUiIconMirrorInRTL"/>
+					</Toolbar>	
+					
+					<Label text="{i18n>operatingHours}" />
+					<Input value="{device>/operating_hours}" type="Number">
+					</Input>
+					
+					<Label text="{i18n>operatingDays}" />
+					<Input value="{device>/operating_days}" type="Number">
+					</Input>
+					
+
+					
+
+								
+				</f:SimpleForm>			
+			</content>
+			</Page>
+
+		</NavContainer>
+			
+				</l:SplitPane>
+			</l:PaneContainer>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
+	</content>
+</Page>
+
+
+</mvc:View>

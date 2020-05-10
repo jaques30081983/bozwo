@@ -1,0 +1,159 @@
+sap.ui.define([
+		'jquery.sap.global',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel',
+		"sap/ui/core/routing/History"
+	], function(jQuery, Controller, JSONModel, History) {
+	"use strict";
+	var Id = 0;
+	var masterdataId = 0;
+	var post_put = '';
+	var PageController = Controller.extend("sap.ui.bw.bozwo.controller.MasterdataBankAccount", {
+		onInit: function () {
+			var oRouter = this.getOwnerComponent().getRouter();
+			oRouter.getRoute("masterdata-bank-account-edit").attachMatched(this._onRouteMatchedEdit, this);
+			oRouter.getRoute("masterdata-bank-account-add").attachMatched(this._onRouteMatchedAdd, this);
+			// Hint: we don't want to do it this way
+			/*
+			oRouter.attachRouteMatched(function (oEvent){
+				var sRouteName, oArgs, oView;
+				sRouteName = oEvent.getParameter("name");
+				if (sRouteName === "employee"){
+					this._onRouteMatched(oEvent);
+				}
+			}, this);
+			*/
+			
+		},
+		_onRouteMatchedEdit : function (oEvent) {
+			var oBundle = this.getView().getModel("i18n").getResourceBundle();
+			var oArgs, oView;
+			post_put = 'PUT';
+			oArgs = oEvent.getParameter("arguments");
+			oView = this.getView();
+			Id = oArgs.Id;
+			
+			var busyDialog = new sap.m.BusyDialog({
+
+	  			text:oBundle.getText("loadingData")
+
+	  			});
+		
+			
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.attachRequestSent(function(){busyDialog.open();});
+			oModel.loadData("/api/BankAccount/"+oArgs.Id, false);
+			this.getView().setModel(oModel,"account"); 
+			oModel.attachRequestCompleted(function(){busyDialog.close();});
+			oModel.attachRequestFailed(function(){sap.m.MessageToast.show(oBundle.getText("sessionEnded"));sap.m.URLHelper.redirect("/login");});
+
+
+			oView.bindElement({
+				path : "/masterdata-bank-account-edit(" + oArgs.Id + ")",
+				events : {
+					change: this._onBindingChange.bind(this),
+					dataRequested: function (oEvent) {
+						oView.setBusy(true);
+					},
+					dataReceived: function (oEvent) {
+						oView.setBusy(false);
+					}
+				}
+			});
+		},
+		_onRouteMatchedAdd : function (oEvent) {
+			var oBundle = this.getView().getModel("i18n").getResourceBundle();
+			var oArgs, oView;
+			post_put = 'POST';
+			oArgs = oEvent.getParameter("arguments");
+			oView = this.getView();
+			Id = 0;		
+			masterdataId = oArgs.masterdataId;
+			
+			
+			var busyDialog = new sap.m.BusyDialog({
+
+	  			text:oBundle.getText("loadingData")
+
+	  			});
+			
+			
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.attachRequestSent(function(){busyDialog.open();});
+			oModel.loadData("/api/BankAccount/"+Id, false);
+			
+			this.getView().setModel(oModel,"account"); 
+			oModel.attachRequestCompleted(function(){busyDialog.close();});
+			oModel.attachRequestFailed(function(){sap.m.MessageToast.show(oBundle.getText("sessionEnded"));sap.m.URLHelper.redirect("/login");});
+
+			
+			
+			
+			
+			
+			oView.bindElement({
+				path : "/masterdata-bank-account-add(" + Id + ")",
+				events : {
+					change: this._onBindingChange.bind(this),
+					dataRequested: function (oEvent) {
+						oView.setBusy(true);
+					},
+					dataReceived: function (oEvent) {
+						oView.setBusy(false);
+					}
+				}
+			});
+			
+		},
+		_onBindingChange : function (oEvent) {
+			// No data for the binding
+			if (!this.getView().getBindingContext()) {
+				this.getRouter().getTargets().display("notFound");
+			}
+		},
+		onNavBack: function () {
+			/*
+			var oHistory = History.getInstance();
+			var sPreviousHash = oHistory.getPreviousHash();
+
+			if (sPreviousHash !== undefined) {
+				window.history.go(-1);
+			} else {
+				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+				oRouter.navTo("overview", true);
+			}
+			 */
+			var masterdataIdNew = this.getView().getModel("account").getProperty("/masterdata_id");
+			
+			if (typeof masterdataIdNew === 'undefined' || masterdataIdNew === null || masterdataIdNew === '') {
+    			// variable is undefined or null		
+			}else{
+				masterdataId = masterdataIdNew;		
+			}
+			
+			this.getOwnerComponent().getRouter().navTo("masterdata-edit",{
+				masterdataId: masterdataId
+			});
+		},
+		onSave: function (){
+			
+			var oModel = new sap.ui.model.json.JSONModel();
+			
+			if(this.getView().getModel("account").getProperty("/masterdata_id") == 0){
+				this.getView().getModel("account").setProperty("/masterdata_id", masterdataId);	
+			}
+			
+			var oParameter = this.getView().getModel("account").getJSON();
+			
+			oModel.loadData("/api/BankAccount/"+Id, oParameter, true, post_put, null, false, null);
+
+			sap.m.MessageToast.show("Saved "+oParameter);
+			
+			this.onNavBack();
+		}
+	});
+ 
+ 
+	return PageController;
+ 
+});

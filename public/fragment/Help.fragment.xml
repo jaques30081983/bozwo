@@ -1,0 +1,31 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		id="helpDialog"
+		class="sapUiContentPadding"
+		title="{i18n>help} ">
+		
+		<content>
+			
+
+			
+
+		<core:HTML 
+		content='
+		&lt;div class=&quot;game&quot; style=&quot;width:300px; height:500px;&quot;&gt;&lt;/div&gt;
+		'>
+		</core:HTML>
+
+
+
+			
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>close}"
+				press="onHelpExit"/>		
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>

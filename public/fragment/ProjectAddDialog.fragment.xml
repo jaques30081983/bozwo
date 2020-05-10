@@ -1,0 +1,104 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		id="projectAddDialog"
+		class="sapUiContentPadding"
+		title="{i18n>projectCreate}"
+		contentWidth="70%"
+		>
+		
+		<content>
+			<f:SimpleForm
+					editable="true"
+					layout="ResponsiveGridLayout"
+					items="{/}" 
+					columnsM="1"
+					columnsL="2"
+					columnsXL="3"
+					>
+				<Label text="{i18n>name}"/>
+				<Input value="{project>/name}"></Input>
+				<Label text="{i18n>description}"/>
+				<Input value="{project>/description}"></Input>
+				<Label text="{i18n>location}" />
+				<Input value="{project>/location}"></Input>
+				<Label text="{i18n>start}"/>
+				<DateTimePicker
+					
+					value="{project>/start_date_time}"
+					valueFormat="yyyy-MM-dd HH:mm:ss"
+					displayFormat="yyyy-MM-dd HH:mm:ss"
+					width="100%"
+					placeholder="Enter Date &amp; Time ..."
+					class="sapUiSmallMarginBottom" />
+				<Label text="{i18n>end}"/>
+				<DateTimePicker
+					
+					value="{project>/end_date_time}"
+					valueFormat="yyyy-MM-dd HH:mm:ss"
+					displayFormat="yyyy-MM-dd HH:mm:ss"
+					width="100%"
+					placeholder="Enter Date &amp; Time ..."
+					class="sapUiSmallMarginBottom" />
+				<Label text="{i18n>status}"/>
+				<Select width="100%" items="{statuses>/}"  forceSelection="false"	selectedKey="{project>/status}">
+						<core:Item key="{statuses>id}" text="{statuses>name}" />
+				</Select>
+				
+				<Label text="{i18n>type}"/>
+				<Select width="100%" items="{types>/}"  
+					forceSelection="false"	
+					selectedKey="{project>/type}">
+					<core:Item key="{types>id}" text="{types>name}" />
+				</Select>	
+				
+				<Label text="{i18n>customer}" />
+				
+				<Button
+				text="{customer>/customer_name}"
+				press="handleSelectMasterdataDialogPress" />
+			
+
+				
+				<Label text="{i18n>person}" />
+				<Select width="100%" items="{customer_people>/}"  forceSelection="false"	selectedKey="{project>/customer_person_id}">
+					<core:Item key="{customer_people>id}" text="{customer_people>first_name} {customer_people>last_name}" />
+				</Select>
+				<Label text="{i18n>reminders}"/>
+				<TimePicker
+					value="{project>/reminder_time}"
+					valueFormat="HH:mm"
+					displayFormat="HH:mm"
+					/>
+				<Label text="{i18n>attendees}"/>
+				
+				<MultiComboBox
+					id="projectEditMultiComboBox"
+					selectionChange="handleSelectionChange"
+					selectionFinish="handleSelectionFinish"
+					
+					items="{path: 'people>/',
+			          sorter: {path : 'first_name'}
+			          }">
+					<core:Item key="{people>id}" app:email="{people>email}" text="{people>first_name} {people>last_name}"/>
+				</MultiComboBox>
+				
+				</f:SimpleForm>				
+			
+		</content>
+		<buttons>
+			<Button
+				text="{i18n>create}"
+				press="onAddProject"/>		
+
+			<Button
+				text="{i18n>close}"
+				press="onCloseProjectAddDialog"/>		
+		</buttons>
+
+	</Dialog>
+</core:FragmentDefinition>

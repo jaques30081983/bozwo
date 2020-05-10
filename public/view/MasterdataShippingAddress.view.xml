@@ -1,0 +1,83 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.MasterdataShippingAddress"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<VBox class="sapUiSmallMargin">
+				<f:SimpleForm id="SimpleFormToolbar"
+					editable="true"
+					layout="ResponsiveGridLayout"
+					items="{/}" >
+					<f:toolbar>
+						<Toolbar id="TB1">
+							<Button icon="sap-icon://nav-back" press="onNavBack" />
+							<Title text="{i18n>shippingAddress}" level="H4" titleStyle="H4"/>
+							<ToolbarSpacer />
+							
+							<Button icon="sap-icon://save" press="onSave"/>
+							
+						</Toolbar>
+					</f:toolbar>
+					<f:content>
+						<Toolbar>
+							<Title text="{i18n>address}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://building"/>
+						</Toolbar>
+						<Label text="{i18n>name}" />
+						<Input value="{address>/name}" />
+						<Label text="{i18n>department}" />
+						<Input value="{address>/department}">
+						</Input>
+						
+						<Label text="{i18n>contact}" />
+						<Input value="{address>/contact}">
+						</Input>
+						
+						<Label text="{i18n>streetNo}" />
+						<Input value="{address>/street}">
+						</Input>
+						
+						<Input value="{address>/house_number}">
+							<layoutData>
+								<l:GridData span="L3 M4 S4" />
+							</layoutData>
+						</Input>
+						<Label text="{i18n>zipCity}" />
+						<Input value="{address>/zip}">
+							<layoutData>
+								<l:GridData span="L3 M4 S4" />
+							</layoutData>
+						</Input>
+						<Input value="{address>/city}" />
+						<Label text="{i18n>country}" />
+						<Select width="100%" items="{countries>/}" 	selectedKey="{address>/country_id}">
+							<core:Item key="{countries>id}" text="{countries>name}" />
+						</Select>
+						
+						<Label text="{i18n>phone}" />						
+						<Input value="{address>/phone}">
+						</Input>
+							
+						<Label text="{i18n>note}" />						
+						<Input value="{address>/note}">
+						</Input>
+						
+					</f:content>
+				</f:SimpleForm>
+		</VBox>
+	</content>
+</Page>
+
+
+</mvc:View>

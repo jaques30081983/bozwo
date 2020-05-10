@@ -1,0 +1,90 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.Number"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:t="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<VBox class="sapUiSmallMargin">
+				<f:SimpleForm id="SimpleFormToolbar"
+					editable="true"
+					layout="ResponsiveGridLayout"
+					 >
+					<f:toolbar>
+						<Toolbar id="TB1">
+							<Button icon="sap-icon://nav-back" press="onNavBack" />
+							<Title text="{i18n>number}" level="H4" titleStyle="H4"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://save" press="onSave"/>
+							
+						</Toolbar>
+					</f:toolbar>
+					<f:content>
+						<Toolbar>
+							<Title text="{i18n>Name}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://person-placeholder"/>
+						</Toolbar>
+
+						<Label text="{i18n>name}" />
+						<Input value="{number>/name}" />
+						
+						<Label text="{i18n>description}" />
+						<Input value="{number>/description}" />
+						
+						
+						<Toolbar>
+							<Title text="{i18n>number}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://number-sign"/>
+						</Toolbar>					
+					
+						<Label text="{i18n>pattern}" />
+						<Input id="patternInput" value="{number>/pattern}" liveChange=".onLiveChange"/>
+					
+						<Label text="{i18n>sequentialNumber}" />
+						<Input id="numberInput" value="{number>/sequential_number}" type="Number" liveChange=".onLiveChange"/>						
+						
+						<Label text="{i18n>length}" />
+						<Input id="lengthInput" value="{number>/length}" type="Number" liveChange=".onLiveChange"/>
+						
+						<Label text="{i18n>resetYear}" />
+						<CheckBox selected="{number>/reset}"/>
+						
+						<Toolbar>
+							<Title text="{i18n>simulation}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://simulate"/>
+						</Toolbar>
+						<Label text="{i18n>result}" />
+						<Input id="numberResult" editable="false"/>
+						
+						<Toolbar>
+							<Title text="{i18n>company}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://factory"/>
+						</Toolbar>
+						
+						<Label text="{i18n>company}" />
+						<Select width="100%" items="{masterdata>/}"  forceSelection="false"	selectedKey="{number>/masterdata_id}">
+							<core:Item key="{masterdata>id}" text="{masterdata>company_name_1} {masterdata>company_name_2} {masterdata>first_name} {masterdata>last_name}" />
+						</Select>
+						
+					</f:content>
+				</f:SimpleForm>
+		</VBox>
+	</content>
+</Page>
+
+
+</mvc:View>

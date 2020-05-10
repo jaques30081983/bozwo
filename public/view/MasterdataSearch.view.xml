@@ -1,0 +1,68 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.MasterdataSearch"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<List
+				id="searchResultList"
+				class="sapUiResponsiveMargin"
+				width="auto"
+				items="{/}">
+				<headerToolbar>
+			<Toolbar>
+				<Title text="{i18n>masterDataSearch}" />
+				<ToolbarSpacer />
+				<Select
+					id="filterSelect"
+					forceSelection="false"
+					change="onSetFilter"
+					items="{
+						path: 'masterdata_groups>/',
+						sorter: { path: 'name' }
+					}">
+					<core:Item key="{masterdata_groups>id}" text="{masterdata_groups>name}" />
+				</Select>
+				<SearchField id="masterdataSearchField" width="50%" search="onSearchMasterdatas" />
+			</Toolbar>
+		</headerToolbar>
+				<items>
+					<ObjectListItem
+						title="{company_name_1} {company_name_2} - {first_name} {last_name}"
+						intro="{ parts : [ {path: 'group'}, {path:'masterdata_groups>/'} ], formatter: '.formatter.getNameById' }"
+						
+						number="{zip}"
+	
+						
+						type="Navigation"
+						app:masterdataId="{id}"
+						press="onPress">
+						<firstStatus>
+					<ObjectStatus text="{
+						path: 'created_at'
+					}"/>
+				</firstStatus>
+				<secondStatus>
+					<ObjectStatus text="{
+						path: 'updated_at'
+						
+					}"/>
+				</secondStatus>
+				</ObjectListItem>
+				</items>
+			</List>
+	</content>
+</Page>
+
+
+</mvc:View>

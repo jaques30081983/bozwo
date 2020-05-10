@@ -1,0 +1,116 @@
+<mvc:View controllerName="sap.ui.bw.bozwo.controller.Menu"
+          height="100%"
+		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns:core="sap.ui.core"
+          xmlns="sap.m">
+<OverflowToolbar>
+<Button icon="images/favicon.png" press="onDefaultAction"/>
+	<MenuButton text="Menu">
+		<menu>
+        	<Menu itemSelected="onMenuAction">
+            	<items>
+					<MenuItem text="{i18n>masterData}" icon="sap-icon://contacts" >
+						<items>
+							
+							<MenuItem text="{i18n>add}" icon="sap-icon://add-contact" key="masterdata-add"/>
+                            <MenuItem text="{i18n>search}" icon="sap-icon://search" key="masterdata-search"/>
+                                
+						</items>
+					</MenuItem>
+							
+					<MenuItem text="{i18n>transaction}" icon="sap-icon://workflow-tasks" >
+						<items>
+							<MenuItem text="{i18n>project}" icon="sap-icon://business-one" >
+								<items>
+									<MenuItem text="{i18n>add}" icon="sap-icon://add" key="overview"/>
+									<MenuItem text="{i18n>search}" icon="sap-icon://search" key="project-search" app:model="latest" app:origin="overview"/>
+								</items>
+							</MenuItem>
+
+							<MenuItem text="{i18n>rental}" icon="sap-icon://retail-store" >
+								<items>
+									<MenuItem text="{i18n>rentalIssue}" icon="sap-icon://outbox" />
+									<MenuItem text="{i18n>rentalReturn}" icon="sap-icon://inbox" />
+								</items>
+							</MenuItem>
+
+							<MenuItem text="{i18n>hire}" icon="sap-icon://cause" >
+								<items>
+									<MenuItem text="{i18n>inquiry}" icon="sap-icon://call" />
+									<MenuItem text="{i18n>absence}" icon="sap-icon://line-chart-time-axis" />
+								</items>
+							</MenuItem>
+
+							<MenuItem text="{i18n>scheduler}" icon="sap-icon://gantt-bars" key="overview" app:origin="overview"/>
+							<MenuItem text="{i18n>task}" icon="sap-icon://activities" >
+								<items>
+									<MenuItem text="{i18n>add}" icon="sap-icon://add" key="overview" app:origin="overview"/>
+									<MenuItem text="{i18n>search}" icon="sap-icon://search" key="task" app:origin="overview"/>
+								</items>
+							</MenuItem>	
+						</items>
+					</MenuItem>
+					
+					
+					<MenuItem text="Belege" icon="sap-icon://documents" >
+						<items>
+							<MenuItem text="{i18n>offer}" icon="sap-icon://customer-briefing" key="document-search" app:model="DocumentOffer" app:origin="overview" />
+							<MenuItem text="{i18n>order}" icon="sap-icon://sales-order" key="document-search" app:model="DocumentOrder" app:origin="overview"/>
+							<MenuItem text="{i18n>delivery}" icon="sap-icon://shipping-status" key="document-search" app:model="DocumentDeliveryNote" app:origin="overview"/>
+							<MenuItem text="{i18n>rental}" icon="sap-icon://retail-store" key="document-search" app:model="DocumentRental" app:origin="overview"/>
+							<MenuItem text="{i18n>invoice}" icon="sap-icon://simple-payment" key="document-search" app:model="DocumentInvoice" app:origin="overview"/>
+							<MenuItem text="{i18n>reminder}" icon="sap-icon://monitor-payments" key="document-search" app:model="DocumentReminder" app:origin="overview"/>
+							<MenuItem text="{i18n>reversalInvoice}" icon="sap-icon://payment-approval" key="document-search" app:model="DocumentReversalInvoice" app:origin="overview"/>
+                    	</items>
+					</MenuItem>
+					
+					<MenuItem text="{i18n>resources}" icon="sap-icon://inventory" >
+						<items>
+							<MenuItem text="{i18n>employee}" icon="sap-icon://employee" key="employee-search" />
+							<MenuItem text="{i18n>inventory}" icon="sap-icon://product" key="inventory"/>
+							<MenuItem text="{i18n>vehicle}" icon="sap-icon://car-rental" key="vehicle-search" />
+							<MenuItem text="{i18n>maintenance}" icon="sap-icon://wrench" />
+                    	</items>
+					</MenuItem>
+					
+					
+					<MenuItem text="Finanzen" icon="sap-icon://expense-report">
+						<items>
+                        <MenuItem text="Berichte" icon="sap-icon://manager-insight"/>
+                        <MenuItem text="Opos" icon="sap-icon://monitor-payments" />
+                    	</items>
+					</MenuItem>
+					
+					
+					<MenuItem text="System" icon="sap-icon://settings" >
+						<items>
+							<MenuItem text="Benutzer" icon="sap-icon://manager" />
+							<MenuItem text="Firma" icon="sap-icon://factory" />
+							<MenuItem text="{i18n>numbers}" icon="sap-icon://number-sign" key="number-search"/>
+							<MenuItem text="Belege" icon="sap-icon://documents" />
+							<MenuItem text="Kommunikation" icon="sap-icon://call" />
+
+                    	</items>
+					</MenuItem>
+					
+                </items>	
+        	</Menu>
+    	</menu>
+	</MenuButton>
+				<ToolbarSpacer/>
+					<Title id="header_title" text="" />
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://email"
+						press="onButtonEmail"/>
+				
+				<Button icon="sap-icon://message-popup" text="0" 
+						press="handleMessageViewPress"/>
+				
+				<Button id="user_button" text="{view>/myName}" press="onButtonLogout" icon="sap-icon://employee" />
+				<Button icon="sap-icon://sys-help" press="onButtonHelp"/>
+	
+			</OverflowToolbar>
+</mvc:View>
+
+

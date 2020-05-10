@@ -1,0 +1,24 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="masterdataSelectDialog"
+		noDataText="{i18n>NotFound}"
+		title="{i18n>masterDataSelect}"
+		search="handleMasterdataSearch"
+		confirm="handleMasterdataClose"
+		cancel="handleMasterdataClose"
+		items="{
+			path: 'masterdata>/'
+		}" 
+		contentWidth="70%"
+		>
+		<StandardListItem
+			title="{masterdata>number} {masterdata>company_name_1} {masterdata>company_name_2} {masterdata>first_name} {masterdata>last_name}"
+			description="{masterdata>zip} {masterdata>city}"
+			
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

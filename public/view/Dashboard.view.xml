@@ -1,0 +1,27 @@
+<mvc:View
+	height="300px"
+	controllerName="sap.ui.bw.bozwo.controller.Dashboard"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	
+		<TileContainer
+			id="dashboard-container"
+			tileDelete="handleTileDelete"
+			tiles="{dashboard>/}">
+			<StandardTile
+				icon="sap-icon://{dashboard>icon}"
+				type="{dashboard>type}"
+				number="{dashboard>number}"
+				numberUnit="{dashboard>numberUnit}"
+				title="{dashboard>title}"
+				info="{dashboard>info}"
+				infoState="{dashboard>infoState}" 
+				press="handleTilePress"
+				app:target="{dashboard>target}"
+				app:model="{dashboard>model}"
+				/>
+		</TileContainer>
+			
+
+</mvc:View>

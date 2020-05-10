@@ -1,0 +1,100 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.PlanningCalendar"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m">
+	<l:DynamicSideContent
+			id="DynamicSideContent"
+			class="sapUiDSCExplored sapUiContentPadding"
+			sideContentVisibility="AlwaysShow"
+			showSideContent="{path: 'stateModel>/legendShown'}"
+			containerQuery="true"
+			breakpointChanged="updateToggleButtonState">
+		<l:mainContent >
+
+		<VBox>
+		<PlanningCalendar
+			id="dashboardPlanningCalendar"
+			
+			showRowHeaders="false"
+			stickyHeader="true"
+			showDayNamesLine="true"
+			viewKey="Day"
+			rows="{path: '/'}"
+			appointmentsVisualization="Filled"
+			appointmentSelect="handleAppointmentSelect"
+			intervalSelect="handleIntervalSelect"
+			viewChange="handleStartDateChange"
+			startDateChange="handleStartDateChange"
+			showEmptyIntervalHeaders="false"
+			showWeekNumbers="true">
+			
+			<toolbarContent>
+				<ToggleButton pressed="{path: 'stateModel>/deleteActive'}" icon="sap-icon://delete"/>
+				<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
+			</toolbarContent>
+
+			<rows>
+				<PlanningCalendarRow
+					title="{name}"
+					text="{text}"
+					icon="{icon}"
+					
+					appointments="{path : 'appointments', templateShareable: 'true'}"
+					intervalHeaders="{model: 'holidays', path: '/', templateShareable: 'true'}">
+					<appointments>
+						<unified:CalendarAppointment
+							startDate="{path:'start_date_time', formatter:'.formatter.dateFormatter'}"
+							endDate="{path:'end_date_time', formatter:'.formatter.dateFormatter'}"
+							key="{id}"
+							title="{name}"
+							icon="{icon}"
+							tooltip="{number} {name}  {description}"
+							text="{description}"
+							type="{type}"
+							tentative="{=${status} === 2 ? false : true}"
+							app:status="{status}"
+							app:location="{location}"
+							app:attendees="{attendees}"
+							app:google_event_id="{google_event_id}"
+							app:reminder_time="{reminder_time}"
+							>
+							<unified:customData>
+							  <core:CustomData key="appointment" value="{=${status} === 1 ? '1' : ''}{=${status} === 2 ? '2' : ''}{=${status} === 3 ? '3' : ''}" writeToDom="true" />
+							 </unified:customData>
+						</unified:CalendarAppointment>
+					</appointments>
+					<intervalHeaders>
+						<unified:CalendarAppointment
+							startDate="{path:'holidays>start_date_time', formatter:'.formatter.dateFormatter'}"
+							endDate="{path:'holidays>end_date_time', formatter:'.formatter.dateFormatter'}"
+							tentative="true"
+							title="{holidays>name}"
+							tooltip="{holidays>name}  {holidays>description}"
+							type="{holidays>type}">
+						</unified:CalendarAppointment>
+					</intervalHeaders>
+				</PlanningCalendarRow>
+			</rows>
+			</PlanningCalendar>
+			</VBox>
+			
+			</l:mainContent>
+			<l:sideContent >
+				<PlanningCalendarLegend id="PlanningCalendarLegend"
+					items="{model: 'legends', path : '/legendItems', templateShareable: 'true'}"
+					appointmentItems="{model: 'legends', path : '/legendAppointmentItems', templateShareable: 'true'}"
+					standardItems="Today,Selected,NonWorkingDay">
+					<items>
+						<unified:CalendarLegendItem text="{legends>text}" type="{legends>type}" tooltip="{legends>text}" />
+					</items>
+					<appointmentItems>
+						<unified:CalendarLegendItem text="{legends>text}" type="{legends>type}" tooltip="{legends>text}" />
+					</appointmentItems>
+				</PlanningCalendarLegend>
+			</l:sideContent>
+	</l:DynamicSideContent>
+</mvc:View>

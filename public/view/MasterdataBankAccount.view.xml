@@ -1,0 +1,66 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.MasterdataBankAccount"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<VBox class="sapUiSmallMargin">
+				<f:SimpleForm id="SimpleFormToolbar"
+					editable="true"
+					layout="ResponsiveGridLayout"
+					items="{/}" >
+					<f:toolbar>
+						<Toolbar id="TB1">
+							<Button icon="sap-icon://nav-back" press="onNavBack" />
+							<Title text="{i18n>bankAccount}" level="H4" titleStyle="H4"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://save" press="onSave"/>
+							
+						</Toolbar>
+					</f:toolbar>
+					<f:content>
+						<Toolbar>
+							<Title text="{i18n>account}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://account-placeholder"/>
+						</Toolbar>
+						<Label text="{i18n>accountNumber}" />
+						<Input value="{account>/acc_number}" />
+						
+						<Label text="{i18n>accountBankSort}" />
+						<Input value="{account>/bank_name}">
+						<layoutData>
+								<l:GridData span="L6 M8 S12" />
+							</layoutData>
+						</Input>
+						
+						<Input value="{account>/sort_number}"/>
+							
+
+						
+						<Label text="{i18n>accountBic}" />
+						<Input value="{account>/bic}" />
+						
+						<Label text="{i18n>accountIban}" />
+						<Input value="{account>/iban}" />
+						
+						<Label text="{i18n>note}" />
+						<Input value="{account>/note}" />
+						
+					</f:content>
+				</f:SimpleForm>
+		</VBox>
+	</content>
+</Page>
+
+
+</mvc:View>

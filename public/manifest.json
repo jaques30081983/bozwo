@@ -1,0 +1,351 @@
+{
+  "_version": "1.1.0",
+  "sap.app": {
+	"_version": "1.1.0",
+	"id": "sap.ui.bw.bozwo",
+	"type": "application",
+	"i18n": "i18n/i18n.properties",
+	"title": "{{appTitle}}",
+	"description": "{{appDescription}}",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	},
+	"dataSources": {
+	  "invoiceRemote": {
+		"uri": "data/Invoices.json",
+		"type": "json"
+	  }
+	}
+  },
+  "sap.ui": {
+	"_version": "1.1.0",
+	"technology": "UI5",
+	"deviceTypes": {
+	  "desktop": true,
+	  "tablet": true,
+	  "phone": true
+	},
+	"supportedThemes": [
+	  "sap_bluecrystal"
+	]
+  },
+  "sap.ui5": {
+	"_version": "1.1.0",
+	"rootView": "sap.ui.bw.bozwo.view.App",
+	"dependencies": {
+	  "minUI5Version": "1.30",
+	  "libs": {
+		"sap.m": {}
+	  }
+	},
+	"models": {
+	  "i18n": {
+		"type": "sap.ui.model.resource.ResourceModel",
+		"settings": {
+		  "bundleName": "sap.ui.bw.bozwo.i18n.i18n"
+		},
+		"async": true
+	  },
+	  "countries": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/Country"
+	  },
+	  "paymentMethods": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/PaymentMethod"
+	  },
+	  "paymentTerms": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/PaymentTerm"
+	  },
+	  "discounts": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/Discount"
+	  },
+	  "units": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/Unit"
+	  },
+	  "currencies": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/Currency"
+	  },
+	  "taxes": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/Tax"
+	  },
+	  "factors": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/Factor"
+	  },
+	  "power_connectors": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/PowerConnector"
+	  },
+	  "masterdata_groups": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/MasterdataGroup"
+	  },
+	  "people": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/PeopleGroup/0/Person/0/role/employee"
+	  },
+	  "documents": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"/api/Document"
+	  },
+	  "email": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    
+		"data":{
+				"mailFrom":"", 
+				"mailTo":"", 
+				"mailSubject":"",
+				"mailMessage":"",
+				"mailAttachments":[]
+				}
+	  }
+	},
+	"resources": {
+	  "css": [
+		{
+		  "uri": "css/app.css"
+		}
+	  ]
+	},
+	"routing": {
+	  "config": {
+		"routerClass": "sap.m.routing.Router",
+		"viewType": "XML",
+		"viewPath": "sap.ui.bw.bozwo.view",
+		"controlId": "app",
+		"controlAggregation": "pages",
+		"bypassed": {
+               "target": "notFound"
+            }
+	  },
+	  "routes": [
+		{
+		  "pattern": "",
+		  "name": "index",
+		  "target": "overview"
+		},
+		{
+		  "pattern": "overview",
+		  "name": "overview",
+		  "target": "overview"
+		},
+		{
+		  "pattern": "detail/{invoicePath}",
+		  "name": "detail",
+		  "target": "detail"
+		},
+		{
+		  "pattern": "masterdata-add",
+		  "name": "masterdata-add",
+		  "target": "masterdata"
+		},
+		{
+		  "pattern": "masterdata-edit/{masterdataId}",
+		  "name": "masterdata-edit",
+		  "target": "masterdata"
+		},
+		{
+		  "pattern": "masterdata/search",
+		  "name": "masterdata-search",
+		  "target": "masterdata-search"
+		},
+		{
+		  "pattern": "masterdata-person-add/{masterdataId},{origin}",
+		  "name": "masterdata-person-add",
+		  "target": "masterdata-person"
+		},
+		{
+		  "pattern": "masterdata-person/{Id},{origin}",
+		  "name": "masterdata-person-edit",
+		  "target": "masterdata-person"
+		},
+		{
+		  "pattern": "masterdata-vehicle-add/{masterdataId},{origin}",
+		  "name": "masterdata-vehicle-add",
+		  "target": "masterdata-vehicle"
+		},
+		{
+		  "pattern": "masterdata-vehicle/{Id},{origin}",
+		  "name": "masterdata-vehicle-edit",
+		  "target": "masterdata-vehicle"
+		},
+		{
+		  "pattern": "masterdata-shipping-address-add/{masterdataId}",
+		  "name": "masterdata-shipping-address-add",
+		  "target": "masterdata-shipping-address"
+		},
+		{
+		  "pattern": "masterdata-shipping-address/{Id}",
+		  "name": "masterdata-shipping-address-edit",
+		  "target": "masterdata-shipping-address"
+		},
+		{
+		  "pattern": "masterdata-bank-account-add/{masterdataId}",
+		  "name": "masterdata-bank-account-add",
+		  "target": "masterdata-bank-account"
+		},
+		{
+		  "pattern": "masterdata-bank-account/{Id}",
+		  "name": "masterdata-bank-account-edit",
+		  "target": "masterdata-bank-account"
+		},
+		{
+		  "pattern": "employee/search",
+		  "name": "employee-search",
+		  "target": "employee-search"
+		},
+		{
+		  "pattern": "vehicle/search",
+		  "name": "vehicle-search",
+		  "target": "vehicle-search"
+		},
+		{
+		  "pattern": "inventory",
+		  "name": "inventory",
+		  "target": "inventory"
+		},
+		{
+		  "pattern": "task",
+		  "name": "task",
+		  "target": "task"
+		},
+		{
+		  "pattern": "number/search",
+		  "name": "number-search",
+		  "target": "number-search"
+		},
+		{
+		  "pattern": "number-add/{numberId},{origin}",
+		  "name": "number-add",
+		  "target": "number"
+		},
+		{
+		  "pattern": "number/{Id},{origin}",
+		  "name": "number-edit",
+		  "target": "number"
+		},{
+		  "pattern": "number/search",
+		  "name": "number-search",
+		  "target": "number-search"
+		},
+		{
+		  "pattern": "number-add/{numberId},{origin}",
+		  "name": "number-add",
+		  "target": "number"
+		},
+		{
+		  "pattern": "number/{Id},{origin}",
+		  "name": "number-edit",
+		  "target": "number"
+		},
+		{
+			"pattern": "document/search/{model}",
+			"name": "document-search",
+			"target": "document-search"
+		  },
+		  {
+			"pattern": "document/{Id},{model},{origin}",
+			"name": "document",
+			"target": "document"
+		  },
+		{
+		  "pattern": "project/search/{model}",
+		  "name": "project-search",
+		  "target": "project-search"
+		},
+		{
+		  "pattern": "project-add/{numberId},{origin}",
+		  "name": "project-add",
+		  "target": "project"
+		},
+		{
+		  "pattern": "project/{Id},{origin},{model}",
+		  "name": "project-edit",
+		  "target": "project"
+		}
+	  ],
+	  "targets": {
+		"overview": {
+		  "viewName": "Overview"
+		},
+		"detail": {
+		  "viewName": "Detail"
+		},
+		"masterdata": {
+		  "viewName": "Masterdata",
+		  "title": "Add and Edit masterdata"
+		},
+		"masterdata-person": {
+		  "viewName": "MasterdataPerson",
+		  "title": "Add and Edit masterdata People"
+		},
+		"employee-search": {
+		  "viewName": "EmployeeSearch",
+		  "title": "Search employee"
+		},
+		"masterdata-vehicle": {
+		  "viewName": "MasterdataVehicle",
+		  "title": "Add and Edit masterdata Vehicle"
+		},
+		"vehicle-search": {
+		  "viewName": "VehicleSearch",
+		  "title": "Search vehicle"
+		},
+		"number": {
+		  "viewName": "Number",
+		  "title": "Add and Edit Number"
+		},
+		"number-search": {
+		  "viewName": "NumberSearch",
+		  "title": "Search number"
+		},
+		"document": {
+		  "viewName": "Document",
+		  "title": "Add and Edit Document"
+		},
+		"document-search": {
+		  "viewName": "DocumentSearch",
+		  "title": "Search document"
+		},
+		"project": {
+		  "viewName": "Project",
+		  "title": "Add and Edit Number"
+		},
+		"project-search": {
+		  "viewName": "ProjectSearch",
+		  "title": "Search project"
+		},
+		"masterdata-shipping-address": {
+		  "viewName": "MasterdataShippingAddress",
+		  "title": "Add and Edit masterdata Shipping Adress"
+		},
+		"masterdata-bank-account": {
+		  "viewName": "MasterdataBankAccount",
+		  "title": "Add and Edit masterdata Bank Account"
+		},
+		"masterdata-search": {
+		  "viewName": "MasterdataSearch",
+		  "title": "Search masterdata"
+		},
+		"inventory": {
+		  "viewName": "Inventory",
+		  "title": "Inventory"
+		},
+		"task": {
+		  "viewName": "Task",
+		  "title": "Task"
+		},
+        "notFound": {
+           "viewName": "NotFound",
+           "transition": "show"
+        }
+	  }
+	}
+  }
+}

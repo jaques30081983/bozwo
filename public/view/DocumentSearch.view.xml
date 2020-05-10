@@ -1,0 +1,73 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.DocumentSearch"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<List
+				id="searchResultList"
+				class="sapUiResponsiveMargin"
+				width="auto"
+				items="{/}">
+				<headerToolbar>
+			<Toolbar>
+				<Title text="{i18n>documentSearch}" />
+				<ToolbarSpacer />
+				<Select
+					id="filterSelect"
+					forceSelection="false"
+                    selectedKey="{document_selectedKey>/0/model}"
+					change="onSetFilter"
+					items="{
+						path: 'documents>/',
+						sorter: { path: 'name' }
+					}">
+					<core:Item key="{documents>model}" text="{documents>name}" />
+				</Select>
+				<SearchField id="documentSearchField" width="50%" search="onSearchDocuments" />
+			<Button
+				icon="sap-icon://add"
+				tooltip="{i18n>create}"
+				press="onNewDocument"/>		
+			</Toolbar>
+		</headerToolbar>
+				<items>
+					<ObjectListItem
+						title="{number} {company_name_1} {company_name_2}  {first_name} {last_name}"
+						intro="{ parts : [ {path: 'document'}, {path:'documents>/'} ], formatter: '.formatter.getNameById' }"
+						
+						number="{zip}"
+	
+						
+						type="Navigation"
+						app:documentId="{id}"
+						press="onPress">
+						<firstStatus>
+					<ObjectStatus text="{
+						path: 'created_at'
+					}"/>
+				</firstStatus>
+				<secondStatus>
+					<ObjectStatus text="{
+						path: 'updated_at'
+						
+					}"/>
+				</secondStatus>
+				</ObjectListItem>
+				</items>
+			</List>
+	</content>
+</Page>
+
+
+</mvc:View>

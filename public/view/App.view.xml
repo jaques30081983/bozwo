@@ -1,0 +1,8 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.App"
+	class="sapUiSizeCompact"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+	<App class="myAppBwBozwo" id="app"/>
+</mvc:View>

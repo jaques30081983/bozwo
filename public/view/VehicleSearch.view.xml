@@ -1,0 +1,57 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.VehicleSearch"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<List
+				items="{/}"
+				class="sapUiResponsiveMargin"
+				width="auto"
+				>
+				<headerToolbar>
+			<Toolbar>
+				<Title text="{i18n>vehicleSearch}" />
+				<ToolbarSpacer />
+				<SearchField id="vehicleSearchField" width="50%" search="onSearchVehicle" />
+				<Button icon="sap-icon://add" press="onAddVehicle"/>
+			</Toolbar>
+		</headerToolbar>
+				<items>
+					<ObjectListItem
+						title="{numberplate}  -  {name}  -  {description}"
+						
+	
+						
+						type="Navigation"
+						app:vehicleId="{id}"
+						press="onPress">
+						<firstStatus>
+					<ObjectStatus text="{
+						path: 'created_at'
+					}"/>
+				</firstStatus>
+				<secondStatus>
+					<ObjectStatus text="{
+						path: 'updated_at'
+						
+					}"/>
+				</secondStatus>
+				</ObjectListItem>
+				</items>
+			</List>
+	</content>
+</Page>
+
+
+</mvc:View>

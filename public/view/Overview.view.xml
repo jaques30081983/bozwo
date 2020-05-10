@@ -1,0 +1,25 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.App"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	
+	<Page title="{i18n>homePageTitle}">
+		
+		<customHeader>
+			<OverflowToolbar>
+				<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+				
+			</OverflowToolbar>
+		</customHeader>
+		
+		<content>		
+			<VBox class="sapUiSmallMargin">
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Dashboard"/>
+			
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.PlanningCalendar"/>
+			</VBox>		
+		</content>
+	</Page>
+
+</mvc:View>

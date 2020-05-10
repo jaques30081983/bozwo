@@ -1,0 +1,99 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:upload="sap.m.upload"
+>
+	<Dialog
+		id="emailSendDialog"
+		class="sapUiContentPadding"
+		title="{i18n>mailSend}"
+		contentWidth="70%"
+		>
+		
+		<content>
+			<f:SimpleForm 
+					editable="true"
+					layout="ResponsiveGridLayout"
+					 
+					columnsM="1"
+					columnsL="2"
+					columnsXL="3"
+					>
+
+
+
+
+				<Label text="{i18n>mailFrom}"/>
+				<Input value="{email>/mailFrom}"></Input>
+				
+				<Label text="{i18n>customer}" />
+				<Button
+				text="{customer>/customer_name}"
+				press="handleSelectMasterdataDialogPress" />
+				
+				<Label text="{i18n>person}" />
+				<Select width="100%" items="{path:'customer_people>/',  formatter: '.formatter.addDeselectOption'}"  forceSelection="false"	selectedKey="{email>/customer_person_id}" change="onEmailSelectPerson">
+					<core:Item key="{customer_people>id}" text="{customer_people>first_name} {customer_people>last_name}" />
+				</Select>
+				<Label text="{i18n>mailTo}" />
+				<Input value="{email>/mailTo}"></Input>
+
+				<Label text="{i18n>mailSubject}" />
+				<Input value="{email>/mailSubject}"></Input>
+				
+				<Label text="{i18n>mailMessage}"/>
+				<TextArea value="{email>/mailMessage}" growing="true" growingMaxLines="10" width="100%"/>
+				<Label text="{i18n>mailAttachment}"/>
+				
+
+		<upload:UploadSet
+				id="UploadSet"
+				instantUpload="true"
+				showIcons="true"
+				uploadEnabled="true"
+				terminationEnabled="true"
+				
+				maxFileNameLength="255"
+				maxFileSize="200"
+				
+				uploadUrl="api/0/0/0/0/upload"
+				beforeUploadStarts="onEmailBeforeUploadStarts"
+				
+				uploadCompleted="onEmailUploadCompleted"
+				items="{model: 'email', path: '/mailAttachments', templateShareable: false}">
+			<upload:toolbar>
+
+			</upload:toolbar>
+			<upload:items>
+				<upload:UploadSetItem
+						enabledEdit="false"
+						visibleEdit="False"
+						enabledRemove="false"
+						visibleRemove="false"
+						fileName="{email>fileName}"
+						mediaType="{email>mediaType}"
+						url="{email>url}"
+						thumbnailUrl="{email>thumbnailUrl}"
+						uploadState="{email>uploadState}">
+
+				</upload:UploadSetItem>
+			</upload:items>
+		</upload:UploadSet>
+				</f:SimpleForm>
+
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>send}"
+				press="onEmailSend"/>
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>close}"
+				press="onEmailCloseDialog"/>	
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

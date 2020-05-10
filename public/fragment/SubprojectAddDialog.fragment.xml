@@ -1,0 +1,70 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		id="subprojectAddDialog"
+		class="sapUiContentPadding"
+		title="{i18n>subprojectCreate}"
+		contentWidth="70%"
+		>
+		
+		<content>
+			<f:SimpleForm
+					editable="true"
+					layout="ResponsiveGridLayout" 
+					columnsM="1"
+					columnsL="2"
+					columnsXL="3"
+					>
+				<Label text="{i18n>name}"/>
+					<Input value="{add_subproject>/name}"></Input>
+				<Label text="{i18n>description}"/>
+					<Input value="{add_subproject>/description}"></Input>
+				
+				<Label text="{i18n>start}"/>
+					<DateTimePicker
+						
+						value="{add_subproject>/start_date_time}"
+						valueFormat="yyyy-MM-dd HH:mm:ss"
+						displayFormat="yyyy-MM-dd HH:mm:ss"
+						width="100%"
+						placeholder="Enter Date &amp; Time ..."
+						class="sapUiSmallMarginBottom" />
+				<Label text="{i18n>end}"/>
+					<DateTimePicker
+						
+						value="{add_subproject>/end_date_time}"
+						valueFormat="yyyy-MM-dd HH:mm:ss"
+						displayFormat="yyyy-MM-dd HH:mm:ss"
+						width="100%"
+						placeholder="Enter Date &amp; Time ..."
+						class="sapUiSmallMarginBottom" />
+				<Label text="{i18n>status}"/>
+					<Select width="100%" items="{statuses>/}"  forceSelection="false"	selectedKey="{add_subproject>/status}">
+							<core:Item key="{statuses>id}" text="{statuses>name}" />
+					</Select>
+				
+				<Label text="{i18n>type}" />
+					<Select width="100%" items="{types>/}"  forceSelection="false"	selectedKey="{add_subproject>/type}">
+						<core:Item key="{types>id}" text="{types>name}" />
+					</Select>	
+				
+				
+				</f:SimpleForm>				
+			
+		</content>
+		<buttons>
+			<Button
+				text="{i18n>create}"
+				press="onAddSubproject"/>		
+
+			<Button
+				text="{i18n>close}"
+				press="onCloseSubprojectAddDialog"/>		
+		</buttons>
+
+	</Dialog>
+</core:FragmentDefinition>

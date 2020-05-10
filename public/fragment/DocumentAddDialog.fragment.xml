@@ -1,0 +1,79 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		id="documentAddDialog"
+		class="sapUiContentPadding"
+		title="{i18n>documentCreate} - {documents>key}"
+		contentWidth="70%"
+		>
+		
+		<content>
+			<f:SimpleForm
+				editable="true"
+				layout="ResponsiveGridLayout"
+				items="{/}" 
+				columnsM="1"
+				columnsL="2"
+				columnsXL="3"
+				>
+				<Label text="{i18n>type}"/>
+					<Select width="100%" items="{types>/}"  
+						forceSelection="false"	
+						selectedKey="{document>/type}">
+						<core:Item key="{types>id}" text="{types>name}" />
+					</Select>	
+
+				<Label text="{i18n>customer}" />
+				
+					<Button
+					text="{customer>/customer_name}"
+					press="handleSelectMasterdataDialogPress" />
+				
+					
+					<Label text="{i18n>person}" />
+					<Select width="100%" items="{customer_people>/}"  forceSelection="false"	selectedKey="{document>/person_id}">
+						<core:Item key="{customer_people>id}" text="{customer_people>first_name} {customer_people>last_name}" />
+					</Select>
+
+										
+				<Label text="{i18n>paymentMethod}" />
+
+					<Select width="100%" items="{paymentMethods>/}"  
+						forceSelection="false"	
+						selectedKey="{document>/payment_method_id}">
+						<core:Item key="{paymentMethods>id}" text="{paymentMethods>name}" />
+					</Select>
+				<Label text="{i18n>paymentTerm}" />
+					<Select width="100%" items="{paymentTerms>/}"  
+						forceSelection="false"	
+						selectedKey="{document>/payment_term_id}">
+						<core:Item key="{paymentTerms>id}" text="{paymentTerms>name}" />
+					</Select>
+				<Label text="{i18n>discount}" />
+					<Select width="100%" items="{discounts>/}"  
+						forceSelection="false"	
+						selectedKey="{document>/discount_id}">
+						<core:Item key="{discounts>id}" text="{discounts>name}" />
+					</Select>
+
+				<Label text="%"/>
+					<Input value="{document>/discount}"></Input>
+				
+			</f:SimpleForm>								
+		</content>
+		<buttons>
+			<Button
+				text="{i18n>create}"
+				press="onAddDocument"/>		
+
+			<Button
+				text="{i18n>close}"
+				press="onCloseDocumentAddDialog"/>		
+		</buttons>
+
+	</Dialog>
+</core:FragmentDefinition>

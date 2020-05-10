@@ -1,0 +1,57 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.NumberSearch"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<List
+				
+				class="sapUiResponsiveMargin"
+				width="auto"
+				items="{/}">
+				<headerToolbar>
+			<Toolbar>
+				<Title text="{i18n>numberSearch}" />
+				<ToolbarSpacer />
+				<SearchField id="numberSearchField" width="50%" search="onSearchNumbers" />
+				<Button icon="sap-icon://add" press="onAddNumber"/>
+			</Toolbar>
+		</headerToolbar>
+				<items>
+					<ObjectListItem
+						title="{name}  -  {description}"
+						
+	
+						
+						type="Navigation"
+						app:numberId="{id}"
+						press="onPress">
+						<firstStatus>
+					<ObjectStatus text="{
+						path: 'created_at'
+					}"/>
+				</firstStatus>
+				<secondStatus>
+					<ObjectStatus text="{
+						path: 'updated_at'
+						
+					}"/>
+				</secondStatus>
+				</ObjectListItem>
+				</items>
+			</List>
+	</content>
+</Page>
+
+
+</mvc:View>

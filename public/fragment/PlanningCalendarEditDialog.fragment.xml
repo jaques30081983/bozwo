@@ -1,0 +1,84 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		id="planningCalendarEditDialog"
+		class="sapUiContentPadding"
+		title="{pc>/name}"
+		contentWidth="70%"
+		icon="{=${pc>/type} === 'Type01' ? 'sap-icon://leads' : ''}{=${pc>/type} === 'Type05' ? 'sap-icon://appointment' : ''}{=${pc>/type} === 'Type08' ? 'sap-icon://hint' : ''}"
+		>
+		
+		<content>
+			<f:SimpleForm
+					editable="true"
+					layout="ResponsiveGridLayout"
+					 
+					columnsM="1"
+					columnsL="2"
+					columnsXL="3"
+					>
+				<Label text="{i18n>name}"/>
+				<Input value="{pc>/name}"></Input>
+				<Label text="{i18n>description}"/>
+				<Input value="{pc>/description}"></Input>
+				<Label text="{i18n>location}" />
+				<Input value="{pc>/location}"></Input>
+				<Label text="{i18n>start}"/>
+				<DateTimePicker
+					
+					value="{pc>/start_date_time}"
+					valueFormat="yyyy-MM-dd HH:mm:ss"
+					displayFormat="yyyy-MM-dd HH:mm:ss"
+					width="100%"
+					placeholder="Enter Date &amp; Time ..."
+					class="sapUiSmallMarginBottom" />
+				<Label text="{i18n>end}"/>
+				<DateTimePicker
+					
+					value="{pc>/end_date_time}"
+					valueFormat="yyyy-MM-dd HH:mm:ss"
+					displayFormat="yyyy-MM-dd HH:mm:ss"
+					width="100%"
+					placeholder="Enter Date &amp; Time ..."
+					class="sapUiSmallMarginBottom" />
+				<Label text="{i18n>status}"/>	
+				<Select width="100%" items="{statuses>/}"  forceSelection="false"	selectedKey="{pc>/status}">
+						<core:Item key="{statuses>id}" text="{statuses>name}" />
+				</Select>
+				<Label text="{i18n>reminders}"/>
+				<TimePicker
+					value="{pc>/reminder_time}"
+					valueFormat="HH:mm"
+					displayFormat="HH:mm"
+					/>	
+				<Label text="{i18n>attendees}"/>
+				<MultiComboBox
+					id="pcEditMultiComboBox"
+					selectionChange="handleSelectionChange"
+					selectionFinish="handleSelectionFinish"
+					
+					items="{path: 'people>/',
+			          sorter: {path : 'first_name'}
+			          }">
+					<core:Item key="{people>id}" app:email="{people>email}" text="{people>first_name} {people>last_name}"/>
+				</MultiComboBox>	
+		
+				</f:SimpleForm>
+			
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>save}"
+				press="onSave"/>		
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>close}"
+				press="onCloseEditDialog"/>		
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

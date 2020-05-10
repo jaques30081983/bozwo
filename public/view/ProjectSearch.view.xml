@@ -1,0 +1,66 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.ProjectSearch"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<List
+				items="{path :'/', 				
+				sorter : {
+				path : 'masterdata_id',
+				group : true
+				}}"
+				class="sapUiResponsiveMargin"
+				width="auto"
+
+				>
+				<headerToolbar>
+			<Toolbar>
+				<Title text="{i18n>projectSearch}" />
+				<ToolbarSpacer />
+				<Button icon="sap-icon://future" press="onUpcomingProject"/>
+				<Button icon="sap-icon://monitor-payments" press="onGetNotInvoicedProject"/>
+				<SearchField id="projectSearchField" width="50%" search="onSearchProject" />
+				<Button icon="sap-icon://add" press="onAddProject"/>
+			</Toolbar>
+		</headerToolbar>
+				<items>
+					<ObjectListItem
+						title="{name}"
+						showMarkers="true"
+						type="Navigation"
+						app:projectId="{id}"
+						press="onPress">
+						<firstStatus>
+					<ObjectStatus text="{
+						path: 'start_date_time'
+					}"/>
+				</firstStatus>
+				<secondStatus>
+					<ObjectStatus text="{
+						path: 'end_date_time'
+						
+					}"/>
+				</secondStatus>
+				<attributes>
+					<ObjectAttribute text="{description}" />
+					
+				</attributes>
+				</ObjectListItem>
+				</items>
+			</List>
+	</content>
+</Page>
+
+
+</mvc:View>

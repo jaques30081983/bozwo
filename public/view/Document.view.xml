@@ -1,0 +1,541 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.Document"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:t="sap.ui.table"
+	
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:dnd="sap.ui.core.dnd"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+	<l:ResponsiveSplitter defaultPane="default">
+		<l:PaneContainer>
+			<l:PaneContainer orientation="Vertical">
+			<l:layoutData>
+				<l:SplitterLayoutData resizable="true" size="25%"/>
+			</l:layoutData>
+				
+				<l:SplitPane id="default1" requiredParentWidth="400">
+                        <Panel height="100%" >
+						<headerToolbar>
+							<Toolbar height="3rem">
+									<Button icon="sap-icon://nav-back" press="onNavBack" />
+									<Title text="{i18n>document}" level="H4" titleStyle="H4"/>
+							
+								<ToolbarSpacer />
+									
+							</Toolbar>
+						</headerToolbar>
+                        
+						<IconTabBar class="sapUiResponsiveContentPadding">
+							<items>
+								<IconTabFilter
+									text="{i18n>items}">
+									<SearchField
+							            width="auto"
+							            value="{search>/query}"
+							            liveChange=".onLiveChange"
+							          />
+									<Tree
+								    id="inventoryTree"
+								   
+					    			
+								    items="{path: 'inventoryTree>/',
+							          events: {
+							            change: '.onTreeChange'
+							          },
+							          sorter: {path : 'name'}
+							          }"
+							          
+							          >
+
+							          	<StandardTreeItem
+											app:id="{inventoryTree>id}"  
+											app:name="{inventoryTree>name}"
+											app:price="{inventoryTree>rental_price}"
+											app:category_id="{inventoryTree>category_id}"
+											app:depth="{inventoryTree>depth}" 
+											app:unit_id="{inventoryTree>unit_id}"
+											app:tax_id="{inventoryTree>tax_id}"
+											type="Active"
+											press="onPressInventoryTree"
+											title="{inventoryTree>name}" 
+											icon="{inventoryTree>icon}" 
+											tooltip="{inventoryTree>description} - {inventoryTree>rental_price}EUR">
+											 <customData>
+											  <core:CustomData key="mydata" value="{=${inventoryTree>category_id} > 0  ? 'Normal' : 'Bold'}" writeToDom="true" />
+											 </customData>
+											
+										</StandardTreeItem>
+							          </Tree>
+
+									
+								</IconTabFilter>
+								<IconTabFilter
+									text="{i18n>employee}">
+									<List
+									    id="employeeList"
+									    delete="onPressDelete"
+									    items="{path: 'employeeList>/',
+								          sorter: {path : 'name'}
+								          }"
+								          
+								          >
+									        <dragDropConfig>
+												<dnd:DragDropInfo
+												sourceAggregation="items"
+												targetAggregation="items"
+												dropEffect="Move"
+												dragStart="onDragStart"
+												dragEnter="onDragEnter"
+												dropPosition="On"
+												drop="onDrop"
+												
+												/>
+											</dragDropConfig>
+								          	<StandardListItem 
+												type="Active"
+												press="onPressEmployeeList" 
+												
+												app:id="{employeeList>id}"  
+										
+												title="{employeeList>name}" 
+												icon="{employeeList>icon}" 
+												tooltip="{employeeList>description}">
+												 <customData>
+												  <core:CustomData key="mydata" value="{=${employeeList>employee_id} > 0  ? 'Normal' : 'Bold'}" writeToDom="true" />
+												 </customData>
+												
+											</StandardListItem>
+							          </List>
+									
+								</IconTabFilter>
+								<IconTabFilter
+									text="{i18n>transport}">
+								<List
+								    id="vehicleList"
+								    delete="onPressDelete"
+								    items="{path: 'vehicleList>/',
+							          sorter: {path : 'name'}
+							          }"
+							          
+							          >
+								        <dragDropConfig>
+											<dnd:DragDropInfo
+											sourceAggregation="items"
+											targetAggregation="items"
+											dropEffect="Move"
+											dragStart="onDragStart"
+											dragEnter="onDragEnter"
+											dropPosition="On"
+											drop="onDrop"
+											
+											/>
+										</dragDropConfig>							          
+							          	<StandardListItem 
+											type="Active"
+											press="onPressVehicleList" 
+											
+											app:id="{vehicleList>id}"  
+																				
+											
+											title="{vehicleList>name}" 
+											icon="{vehicleList>icon}" 
+											tooltip="{vehicleList>description}">
+											 <customData>
+											  <core:CustomData key="mydata" value="{=${vehicleList>vehicle_id} > 0  ? 'Normal' : 'Bold'}" writeToDom="true" />
+											 </customData>
+											
+										</StandardListItem>
+							          </List>
+							          
+								</IconTabFilter>
+								
+								<IconTabFilter
+									text="{i18n>miscellaneous}">
+								<List
+								    id="miscellaneousList"
+								    
+								    items="{path: 'miscellaneousList>/',
+							          sorter: {path : 'name'}
+							          }"
+							          
+							          >
+								        <dragDropConfig>
+											<dnd:DragDropInfo
+											sourceAggregation="items"
+											targetAggregation="rows"
+											dropEffect="Move"
+											dragStart="onDragStartMisc"
+											dragEnter="onDragEnterMisc"
+											dropPosition="On"
+											drop="onDrop"
+											targetElement="documentItemsTreeTable"
+											
+											/>
+										</dragDropConfig>							          
+							          	<StandardListItem 
+											type="Active"
+											press="onPressMiscList" 
+											
+											app:id="{miscellaneousList>id}"
+											app:name="{miscellaneousList>name}" 
+											app:type="{miscellaneousList>type}" 
+																				
+											
+											title="{miscellaneousList>name}" 
+											icon="{miscellaneousList>icon}" 
+											tooltip="{miscellaneousList>description}">
+											 <customData>
+											  <core:CustomData key="mydata" value="{=${miscellaneousList>miscellaneous_id} > 0  ? 'Normal' : 'Bold'}" writeToDom="true" />
+											 </customData>
+											
+										</StandardListItem>
+							          </List>
+								</IconTabFilter>
+								
+							</items>
+						</IconTabBar>
+						</Panel>
+					
+					
+
+
+				</l:SplitPane>
+			
+			</l:PaneContainer>
+			
+			
+		<!--	<l:PaneContainer orientation="Vertical"> -->
+			
+			
+			
+		<l:SplitPane requiredParentWidth="800">			
+				
+		<NavContainer id="documentNavCon">		
+
+			<Page id="documentPage"  showHeader="true">
+			<customHeader>
+				<Toolbar id="TB1">
+					<Title text="{document>/number} {customer>/customer_name}" level="H4" titleStyle="H4"/>
+					<ToolbarSpacer />
+					<Button icon="sap-icon://save" press="onSaveDocument"/>
+					<Button icon="sap-icon://duplicate" press="onDuplicateDocument" tooltip="{i18n>duplicate}"/>
+					<Button icon="sap-icon://show" press="onPreviewDocument" tooltip="{i18n>showPreview}"/>
+				
+					<Button icon="sap-icon://print" press="onCreateDocument" tooltip="{i18n>printDocument}"/>
+					<Button icon="sap-icon://email" press="onEmailDocument" tooltip="{i18n>sendByEmail}"/>
+					<Button icon="sap-icon://fax-machine" press="onFaxDocument" tooltip="{i18n>sendByFax}"/>
+					<Button icon="sap-icon://letter" press="onLetterDocument" tooltip="{i18n>sendByLetter}"/>
+					
+				</Toolbar>
+			</customHeader>
+			<content>	
+				<IconTabBar class="sapUiResponsiveContentPadding">
+					<items>
+						<IconTabFilter
+							text="{i18n>mainData}">
+									
+								
+							<f:SimpleForm
+							editable="true"
+							layout="ResponsiveGridLayout"
+							 >
+							<f:content>
+								<Toolbar>
+									<Title text="{i18n>mainData}" level="H5" titleStyle="H5"/>
+									<ToolbarSpacer />
+									<Button icon="sap-icon://form"/>
+								</Toolbar>
+		
+									<Label text="{i18n>project}" />
+									<Input value="{document>/project_id}" />
+									
+									<Label text="{i18n>subproject}" />
+									<Input value="{document>/subproject_id}" />	
+									
+									<Label text="{i18n>manager}" />
+									<Select width="100%" items="{people>/}"  forceSelection="false"	selectedKey="{=${document>/manager_person_id} === 0 ? ${user>/people_id} : ${document>/manager_person_id}}">
+										<core:Item key="{people>id}" text="{people>first_name} {people>last_name}" />
+									</Select>
+
+
+									
+								<Toolbar>
+								<Title text="{i18n>service}" level="H5" titleStyle="H5"/>
+								<ToolbarSpacer />
+								<Button icon="sap-icon://factory"/>
+								</Toolbar>
+									<Label text="{i18n>type}" />
+									<Select width="100%" items="{types>/}"  forceSelection="false"	selectedKey="{document>/type}">
+										<core:Item key="{types>id}" text="{types>name}" />
+									</Select>	
+									
+								<Toolbar>
+									<Title text="{i18n>customer}" level="H5" titleStyle="H5"/>
+									<ToolbarSpacer />
+									<Button icon="sap-icon://customer"/>
+								</Toolbar>
+								
+									<Label text="{i18n>customer}" />
+
+									
+									<Button 
+									text="{customer>/customer_name}"
+									press="handleSelectMasterdataDialogPress" />
+									
+									<Label text="{i18n>person}" />
+									<Select width="100%" items="{customer_people>/}"  forceSelection="false"	selectedKey="{document>/person_id}">
+										<core:Item key="{customer_people>id}" text="{customer_people>first_name} {customer_people>last_name}" />
+									</Select>
+									<Label text="{i18n>paymentMethod}" />
+									<Select width="100%" items="{paymentMethods>/}"  forceSelection="false"	selectedKey="{document>/payment_method_id}">
+										<core:Item key="{paymentMethods>id}" text="{paymentMethods>name}" />
+									</Select>
+									<Label text="{i18n>paymentTerm}" />
+									<Select width="100%" items="{paymentTerms>/}"  forceSelection="false"	selectedKey="{document>/payment_term_id}">
+										<core:Item key="{paymentTerms>id}" text="{paymentTerms>name}" />
+									</Select>
+								
+                                <Toolbar>		
+								<Title text="{i18n>details}" level="H5" titleStyle="H5"/>
+								<ToolbarSpacer />
+								<Button icon="sap-icon://hint"/>
+								</Toolbar>
+									<Label text="{i18n>total}" />
+									<Input value="{document>/total}" />
+									
+									<Label text="{i18n>discount}" />
+									<Select width="100%" items="{discounts>/}"  forceSelection="false"	selectedKey="{document>/discount_id}">
+										<core:Item key="{discounts>id}" text="{discounts>name}" />
+									</Select>
+									<Label text="%" />
+									<Input value="{document>/discount}" />	
+									
+								
+							</f:content>
+							</f:SimpleForm>	
+						</IconTabFilter>
+						
+						<IconTabFilter
+							text="{i18n>document}">
+							<f:SimpleForm 
+								editable="true"
+								layout="ResponsiveGridLayout"
+								 >
+								<f:content>
+									<t:TreeTable
+										id="documentItemsTreeTable"
+										rows="{path:'documentItems>/', sorter: {path : 'pos', comparator : '.alphanumericSorter'}}"
+										visibleRowCountMode="Interactive"
+										selectionMode="None"
+										enableSelectAll="false"
+										rowActionCount="1"
+										ariaLabelledBy="title">
+	
+									<t:dragDropConfig>
+										<dnd:DragDropInfo
+												sourceAggregation="rows"
+												targetAggregation="rows"
+												dragStart="onDragStart"
+												drop="onDrop"/>
+									</t:dragDropConfig>
+			
+									<t:columns>
+									<t:Column width="8rem">
+										<Label text="Position"/>
+										<t:template>
+											<Text text="{documentItems>pos}" wrapping="false"/>
+										</t:template>
+									</t:Column>
+									<t:Column width="13rem">
+										<Label text="Name"/>
+										<t:template>
+											<Input value="{documentItems>name}"/>
+										</t:template>
+									</t:Column>
+									<t:Column width="6rem">
+										<Label text="Price"/>
+										<t:template>
+										
+											<Input value="{documentItems>price}" visible="{= ${documentItems>type} === 0 ? false : true}"/>
+										
+										</t:template>
+									</t:Column>
+									<t:Column width="5rem">
+										<Label text="Quantity"/>
+										<t:template>
+											<Input value="{documentItems>quantity}" visible="{= ${documentItems>type} === 0 ? false : true}"/>
+											
+										</t:template>
+										 
+									</t:Column>
+									<t:Column width="6rem">
+										<Label text="Unit"/>
+										<t:template>
+											<Select width="100%" items="{path:'units>/', templateShareable: false}"  forceSelection="false"	selectedKey="{documentItems>unit_id}" visible="{= ${documentItems>type} === 0 ? false : true}">
+												<core:Item key="{units>id}" text="{units>short_name}" />
+											</Select>	
+											
+										</t:template>
+										 
+									</t:Column>
+									<t:Column width="13rem">
+										<Label text="Start"/>
+										<t:template>
+											<DateTimePicker
+												placeholder="Enter Date ..."
+												value="{documentItems>start_date_time}" 
+												valueFormat="yyyy-MM-dd HH:mm:ss"
+												displayFormat="yyyy-MM-dd HH:mm:ss"
+												class="sapUiSmallMarginBottom"/>
+											
+										</t:template>
+										 
+									</t:Column>
+									<t:Column width="13rem">
+										<Label text="End"/>
+										<t:template>
+											<DateTimePicker
+												placeholder="Enter Date ..."
+												value="{documentItems>end_date_time}"
+												valueFormat="yyyy-MM-dd HH:mm:ss"
+												displayFormat="yyyy-MM-dd HH:mm:ss"
+												class="sapUiSmallMarginBottom"/>
+											
+										</t:template>
+										 
+									</t:Column>
+									<t:Column width="4rem">
+										<Label text="Days"/>
+										<t:template>
+											<Input value="{documentItems>days}"/>
+											
+										</t:template>
+										 
+									</t:Column>
+									<t:Column width="4rem">
+										<Label text="Off"/>
+										<t:template>
+											<Input value="{documentItems>days_off}"/>
+											
+										</t:template>
+										
+										 
+									</t:Column>
+									<t:Column width="4rem">
+										<Label text="Used"/>
+										<t:template>
+											<Input value="{documentItems>days_used}"/>
+											
+										</t:template>
+										
+										 
+									</t:Column>
+									<t:Column width="4rem">
+										<Label text="factor"/>
+										<t:template>
+											<Input value="{documentItems>factor}"/>
+											
+										</t:template>
+										 
+									</t:Column>
+									
+									<t:Column width="6rem">
+										<Label text="Discount"/>
+										<t:template>
+										
+											<Input value="{documentItems>discount}" />
+										
+										</t:template>
+									</t:Column>
+									<t:Column width="8rem">
+										<Label text="Tax"/>
+										<t:template>
+											<Select width="100%" items="{path:'taxes>/', templateShareable: false}"  forceSelection="false"	selectedKey="{documentItems>tax_id}" visible="{= ${documentItems>type} === 0 ? false : true}">
+												<core:Item key="{taxes>id}" text="{taxes>name}" />
+											</Select>	
+											
+										</t:template>
+										 
+									</t:Column>
+									<t:Column width="4rem">
+										<Label text="type"/>
+										<t:template>
+											<Input value="{documentItems>type}"/>
+											
+										</t:template>
+										 
+									</t:Column>
+									<t:Column>
+										<Label text="SubTotal"/>
+										<t:template>
+										
+											<Text text="{= ${documentItems>quantity} * ${documentItems>price}}" wrapping="false"/>
+										
+										</t:template>
+									</t:Column>
+								</t:columns>
+								
+									<t:rowActionTemplate>
+								        <t:RowAction>
+								            
+										<t:RowActionItem type="Delete" press="onDocumentResourcesDeletePress"></t:RowActionItem>
+									    
+									</t:RowAction>
+									
+								     </t:rowActionTemplate>
+								
+								<t:footer><Label text="Total" /></t:footer>
+							</t:TreeTable>
+
+								
+							</f:content>
+							</f:SimpleForm>
+						</IconTabFilter>
+
+						
+						<IconTabFilter
+							text="{i18n>history}">
+								
+							<f:SimpleForm 
+							editable="true"
+							layout="ResponsiveGridLayout"
+							 >
+							<f:content>
+								<Toolbar>
+									<Title text="{i18n>history}" level="H5" titleStyle="H5"/>
+									<ToolbarSpacer />
+									<Button icon="sap-icon://history"/>
+								</Toolbar>
+								
+		
+							</f:content>
+						</f:SimpleForm>
+						</IconTabFilter>
+						
+					</items>
+					</IconTabBar>
+					
+				</content>
+			</Page>
+			</NavContainer>
+
+			</l:SplitPane>
+						
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
+	</content>
+</Page>
+
+
+</mvc:View>

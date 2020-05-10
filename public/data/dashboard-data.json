@@ -1,0 +1,63 @@
+{
+	"TileCollection" : [
+		
+		{
+			"icon" : "activities",
+			"number" : "11",
+			"title" : "Aufgaben",
+			"info" : "Overdue",
+			"infoState" : "Error"
+		},
+		{
+			"icon" : "business-one",
+			"number" : "7",
+			"numberUnit" : "euro",
+			"title" : "Projekte",
+			"info" : "1 day ago"
+		},
+		
+		{
+			"icon" : "retail-store",
+			"number" : "3",
+			"title" : "Vermietungen",
+			"info" : "3 day overdue",
+			"infoState" : "Error"
+		},
+		{
+			"icon" : "pie-chart",
+			"number" : "5",
+			"title" : "Offene Posten",
+			"info" : "4 day ago",
+			"infoState" : "Warning"
+		},
+{
+			"icon" : "activities",
+			"number" : "11",
+			"title" : "Aufgaben",
+			"info" : "Overdue",
+			"infoState" : "Error"
+		},
+		{
+			"icon" : "business-one",
+			"number" : "7",
+			"numberUnit" : "euro",
+			"title" : "Projekte",
+			"info" : "1 day ago"
+		},
+		
+		{
+			"icon" : "retail-store",
+			"number" : "3",
+			"title" : "Vermietungen",
+			"info" : "3 day overdue",
+			"infoState" : "Error"
+		},
+		{
+			"icon" : "pie-chart",
+			"number" : "5",
+			"title" : "Offene Posten",
+			"info" : "4 day ago",
+			"infoState" : "Warning"
+		}
+	]
+}

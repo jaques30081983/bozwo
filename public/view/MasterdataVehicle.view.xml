@@ -1,0 +1,170 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.MasterdataVehicle"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:t="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<VBox class="sapUiSmallMargin">
+				<f:SimpleForm id="SimpleFormToolbar"
+					editable="true"
+					layout="ResponsiveGridLayout"
+					>
+					<f:toolbar>
+						<Toolbar id="TB1">
+							<Button icon="sap-icon://nav-back" press="onNavBack" />
+							<Title text="{i18n>vehicle}" level="H4" titleStyle="H4"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://save" press="onSave"/>
+							
+						</Toolbar>
+					</f:toolbar>
+					<f:content>
+						<Toolbar>
+							<Title text="{i18n>name}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://car-rental"/>
+						</Toolbar>
+						<Label text="{i18n>rentalVehicle}" />
+						<CheckBox selected="{=${vehicle>/rental_vehicle} === 1 ? true : false}"/>
+						
+						<Label text="{i18n>owner}" />
+						<Select width="100%" items="{masterdata>/}" 	selectedKey="{vehicle>/masterdata_id}">
+							<core:Item key="{masterdata>id}" text="{masterdata>company_name_1} {masterdata>company_name_2} {masterdata>first_name} {masterdata>last_name}" />
+						</Select>
+						
+						<Label text="{i18n>name}" />
+						<Input value="{vehicle>/name}" />
+						
+						<Label text="{i18n>description}" />
+						<Input value="{vehicle>/description}" />
+						
+						<Label text="{i18n>manufacturer}" />
+						<Input value="{vehicle>/manufacturer}" />
+						
+						<Label text="{i18n>model}" />
+						<Input value="{vehicle>/model}" />
+						
+						<Label text="{i18n>numberplate}" />
+						<Input value="{vehicle>/numberplate}" />
+						
+						<Toolbar>
+							<Title text="{i18n>details}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://hint"/>
+						</Toolbar>
+						
+						<Label text="{i18n>construction_year}" />
+						<DatePicker valueFormat="yyyy-MM-dd" value="{vehicle>/construction_year}"/>
+						
+						<Label text="{i18n>payload}" />
+						<Input value="{vehicle>/payload}" type="Number"/>
+						
+						<Label text="{i18n>loading_volume}" />
+						<Input value="{vehicle>/loading_volume}" type="Number"/>
+						
+						<Label text="{i18n>averageSpeed}" />
+						<Input value="{vehicle>/average_speed}" type="Number" />
+						
+						<Label text="{i18n>seats}" />
+						<Input value="{vehicle>/seats}" type="Number"/>	
+						
+						<Label text="{i18n>comment}" />
+						<TextArea value="{vehicle>/comment}" />							
+						
+
+						<Toolbar>
+							<Title text="{i18n>date}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://hint"/>
+						</Toolbar>
+						
+						<Label text="{i18n>recipt}" />
+						<DateTimePicker valueFormat="yyyy-MM-dd-HH-mm-ss" value="{vehicle>/start_date_time}"/>	
+						
+						<Label text="{i18n>disposal}" />
+						<DateTimePicker valueFormat="yyyy-MM-dd-HH-mm-ss" value="{vehicle>/end_date_time}"/>
+						
+
+						<Toolbar id="resourceTypeTableTitle">
+							<Title text="{i18n>resourceType} / {i18n>ownCost}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://leads"/>
+						</Toolbar>
+						
+						<Table
+							id="resourceTypeTable"	
+							mode="MultiSelect"
+							inset="false"
+							includeItemInSelection="true"
+							alternateRowColors="true"
+							items="{
+									path: 'resources>/',
+									sorter: {
+									path: 'name'
+									}
+						}">
+						
+							<columns>
+								<Column
+								width="30%"
+								>
+									<Text text="Typ" />
+								</Column>
+								<Column
+									hAlign="Center"
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									>
+									<Text text="Tagessatz" />
+								</Column>
+								<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="Center">
+									<Text text="Stundensatz" />
+								</Column>
+								<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="End">
+									<Text text="Km. Kosten" />
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem vAlign="Middle"
+								selected="{resources>selected}"
+								>
+								
+									<cells>
+										<ObjectIdentifier
+											title="{resources>name}"
+											text="{resources>description}" />
+										<Input value="{resources>day_price}" type="{Number}" description="{UoM}" fieldWidth="{60%}"/>
+										<Input value="{resources>hour_price}"  type="{Number}" description="{UoM}" fieldWidth="{60%}"/>
+										<Input value="{resources>km_price}"  type="{Number}" description="{UoM}" fieldWidth="{60%}"/>
+										
+										
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+						
+					</f:content>
+				</f:SimpleForm>
+		</VBox>
+	</content>
+</Page>
+
+
+</mvc:View>

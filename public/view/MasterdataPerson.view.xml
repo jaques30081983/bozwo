@@ -1,0 +1,195 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.MasterdataPerson"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:t="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<VBox class="sapUiSmallMargin">
+				<f:SimpleForm id="SimpleFormToolbar"
+					editable="true"
+					layout="ResponsiveGridLayout"
+					items="{/}" >
+					<f:toolbar>
+						<Toolbar id="TB1">
+							<Button icon="sap-icon://nav-back" press="onNavBack" />
+							<Title text="{i18n>person}" level="H4" titleStyle="H4"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://save" press="onSave"/>
+							
+						</Toolbar>
+					</f:toolbar>
+					<f:content>
+						<Toolbar>
+							<Title text="{i18n>name}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://person-placeholder"/>
+						</Toolbar>
+						
+						<Label text="{i18n>title}" />
+						<Input value="{person>/title}">
+						</Input>
+						
+						<Label text="{i18n>firstLastName}" />
+						<Input value="{person>/first_name}">
+						<layoutData>
+								<l:GridData span="L3 M4 S4" />
+							</layoutData>
+						</Input>
+						
+						<Input value="{person>/last_name}">
+							
+						</Input>
+						
+						
+						<Toolbar>
+							<Title text="{i18n>contact}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://phone"/>
+						</Toolbar>
+						<Label text="{i18n>phone}" />
+						<Input value="{person>/phone}" type="Tel"/>
+						<Label text="{i18n>mobile}" />
+						<Input value="{person>/mobile}" type="Tel"/>
+						<Label text="{i18n>fax}" />
+						<Input value="{person>/fax}" type="Tel"/>
+						
+						<Label text="{i18n>email}" />
+						<Input value="{person>/email}" type="Email" />
+						
+						<Toolbar>
+							<Title text="{i18n>details}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://hint"/>
+						</Toolbar>
+						<Label text="{i18n>department}" />
+						<Input value="{person>/department}" />
+						
+						<Label text="{i18n>position}" />
+						<Input value="{person>/position}" />
+						
+						<Label text="{i18n>gender}" />
+						
+						
+						<Select width="100%" items="{gender>/}" selectedKey="{person>/gender}">
+							<items>
+								<core:Item key="{gender>id}" text="{gender>name}"/>
+							</items>
+						</Select>
+						
+						
+						<Label text="{i18n>birthday}" />
+						
+						<DatePicker valueFormat="yyyy-MM-dd" value="{person>/birthday}"/>
+						
+						<Toolbar>
+							<Title text="{i18n>group}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://group"/>
+						</Toolbar>
+						
+						<Label text="" />
+						
+						<List
+							id="PersonGroupList"
+							items="{people_groups>/}"
+							mode="SingleSelectLeft"
+							includeItemInSelection="true"
+							selectionChange="onSelectionChangeGroup">
+							
+						<StandardListItem
+								title="{people_groups>name}"
+								description="{people_groups>description}"
+								selected="{=${people_groups>id} === ${person>/group} ? true : false}"
+								
+								app:peopleGroupId="{people_groups>id}"
+								app:peopleGroupRole="{people_groups>role}"
+								 />
+						</List>
+						
+
+						<Toolbar id="resourceTypeTableTitle"
+							visible= "{ parts : [ {path: 'person>/group'}, {path:'people_groups>/'} ], formatter: '.formatter.checkPeopleGroup' }"
+							>
+							<Title text="{i18n>resourceType} / {i18n>ownCost}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://leads"/>
+						</Toolbar>
+						
+						<Table
+							id="resourceTypeTable"	
+							visible= "{ parts : [ {path: 'person>/group'}, {path:'people_groups>/'} ], formatter: '.formatter.checkPeopleGroup' }"			
+							mode="MultiSelect"
+							inset="false"
+							includeItemInSelection="true"
+							alternateRowColors="true"
+							items="{
+									path: 'resources>/',
+									sorter: {
+									path: 'name'
+									}
+						}">
+						
+							<columns>
+								<Column
+								width="30%"
+								>
+									<Text text="Typ" />
+								</Column>
+								<Column
+									hAlign="Center"
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									>
+									<Text text="Tagessatz" />
+								</Column>
+								<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="Center">
+									<Text text="Stundensatz" />
+								</Column>
+								<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="End">
+									<Text text="Km. Kosten" />
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem vAlign="Middle"
+								selected="{resources>selected}"
+								>
+								
+									<cells>
+										<ObjectIdentifier
+											title="{resources>name}"
+											text="{resources>description}" />
+										<Input value="{resources>day_price}" type="{Number}" description="{UoM}" fieldWidth="{60%}"/>
+										<Input value="{resources>hour_price}"  type="{Number}" description="{UoM}" fieldWidth="{60%}"/>
+										<Input value="{resources>km_price}"  type="{Number}" description="{UoM}" fieldWidth="{60%}"/>
+										
+										
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+						
+					</f:content>
+				</f:SimpleForm>
+		</VBox>
+	</content>
+</Page>
+
+
+</mvc:View>

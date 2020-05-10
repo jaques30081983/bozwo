@@ -1,0 +1,302 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.Masterdata"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<VBox class="sapUiSmallMargin">
+				<f:SimpleForm id="SimpleFormToolbar"
+					editable="true"
+					layout="ResponsiveGridLayout"
+					items="{/}" 
+					columnsM="1"
+					columnsL="2"
+					columnsXL="3"
+					>
+					<f:toolbar>
+						<Toolbar id="TB1">
+						<Button icon="sap-icon://nav-back" press="onNavBack" />
+							<Title text="{i18n>masterData} {=${masterdata>/number} === '' ? '' : ' - '} {masterdata>/number}" level="H4" titleStyle="H4"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://delete" press="onDelete"/>
+							<Button icon="sap-icon://save" press="onSave"/>
+						</Toolbar>
+					</f:toolbar>
+					<f:content>
+				
+						<Toolbar>
+							<Title text="{i18n>name}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://customer"/>
+						</Toolbar>
+						<Label text="{i18n>company}" />
+						<Input value="{masterdata>/company_name_1}" />
+						<Label text="{i18n>companyOpt}" />
+						<Input value="{masterdata>/company_name_2}">
+						</Input>
+						
+						<Label text="{i18n>firstLastName}" />
+						<Input value="{masterdata>/first_name}">
+						<layoutData>
+								<l:GridData span="L3 M4 S4" />
+							</layoutData>
+						</Input>
+						
+						<Input value="{masterdata>/last_name}">
+							
+						</Input>
+
+						<Toolbar>
+							<Title text="{i18n>address}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://building"/>
+						</Toolbar>
+						
+						<Label text="{i18n>streetNo}" />
+						<Input value="{masterdata>/street}">
+						</Input>
+						
+						<Input value="{masterdata>/house_number}">
+							<layoutData>
+								<l:GridData span="L3 M4 S4" />
+							</layoutData>
+						</Input>
+						<Label text="{i18n>zipCity}" />
+						<Input value="{masterdata>/zip}">
+							<layoutData>
+								<l:GridData span="L3 M4 S4" />
+							</layoutData>
+						</Input>
+						<Input value="{masterdata>/city}" />
+						<Label text="{i18n>country}" />
+						<Select width="100%" items="{countries>/}" 	selectedKey="{masterdata>/country_id}">
+							<core:Item key="{countries>id}" text="{countries>name}" />
+						</Select>
+						<Toolbar>
+							<Title text="{i18n>contact}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://phone"/>
+						</Toolbar>
+						<Label text="{i18n>phone}" />
+						<Input value="{masterdata>/phone}" type="Tel"/>
+						<Label text="{i18n>mobile}" />
+						<Input value="{masterdata>/mobile}" type="Tel"/>
+						<Label text="{i18n>fax}" />
+						<Input value="{masterdata>/fax}" type="Tel"/>
+						
+						<Label text="{i18n>email}" />
+						<Input value="{masterdata>/email}" type="Email" />
+						<Label text="{i18n>url}" />
+						<Input value="{masterdata>/url}" type="Url" />
+						
+						<Toolbar>
+							<Title text="{i18n>group}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://group"/>
+						</Toolbar>
+						
+						<Label text="" />
+						
+						<List
+							id="GroupList"
+							items="{masterdata_groups>/}"
+							mode="SingleSelectLeft"
+							includeItemInSelection="true"
+							selectionChange="onSelectionChangeGroup">
+							
+							<StandardListItem
+								title="{masterdata_groups>name}"
+								description="{masterdata_groups>description}"
+								selected="{=${masterdata_groups>id} === ${masterdata>/group} ? true : false}"
+								
+								app:masterdataGroupId="{masterdata_groups>id}"
+								 />
+						</List>
+						
+						<Toolbar>
+							<Title text="{i18n>details}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://hint"/>
+						</Toolbar>
+						<Label text="{i18n>taxNumber}" />
+						<Input value="{masterdata>/tax_number}"/>
+						<Label text="{i18n>vatId}" />
+						<Input value="{masterdata>/vat_id}"/>
+						
+						<Label text="{i18n>number}" />
+						<Input value="{masterdata>/number_ext}" />
+						
+						<Label text="{i18n>shopUser}" />
+						<Input value="{masterdata>/shop_user_name}" />
+						<Label text="{i18n>shopPassword}" />
+						<Input value="{masterdata>/shop_password}" />
+						
+						<Label text="{i18n>note}" />
+						<TextArea value="{masterdata>/note}" />
+						
+						<Toolbar>
+							<Title text="{i18n>people}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://delete" press="onDeletePeople"/>
+							<Button icon="sap-icon://add-contact" press="onAddPerson"/>
+							
+						</Toolbar>
+						<Label text="" />
+						<List
+							id="PeopleList"
+							mode="SingleSelectLeft"
+							delete="onDeletePerson"
+							width="auto"
+							items="{masterdata_people>/}" 
+							includeItemInSelection="true"
+							selectionChange="onSelectionChangePeople"
+							>
+							
+							<StandardListItem
+								title="{masterdata_people>title} {masterdata_people>first_name}
+								{masterdata_people>last_name}"
+								description="Phone {masterdata_people>phone}, Mobile {masterdata_people>mobile}" 
+								type="Detail" 
+								selected="{=${masterdata_people>default} === 1 ? true : false}"
+										
+								detailPress="onPersonPress"
+								app:masterdataPersonId="{masterdata_people>id}"
+								/>
+							
+						</List>
+						
+						<Toolbar>
+							<Title text="{i18n>shippingAddresses}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://delete" press="onDeleteShippingAddresses"/>
+							<Button icon="sap-icon://shipping-status" press="onAddShippingAddress"/>
+						</Toolbar>
+						<Label text="" />
+						<List
+							id="ShippingAddressesList"
+							mode="SingleSelectLeft"
+							delete="onDeleteShippingAddress"
+							width="auto"
+							items="{masterdata_shipping_addresses>/}"
+							includeItemInSelection="true"
+							selectionChange="onSelectionChangeShippingAddress"
+							>
+							<StandardListItem
+								title="{masterdata_shipping_addresses>name}"
+								description="{masterdata_shipping_addresses>street} {masterdata_shipping_addresses>number}, 
+								{masterdata_shipping_addresses>zip} {masterdata_shipping_addresses>city}, 
+								
+								
+								{parts : [ 'masterdata_shipping_addresses>country_id', 'countries>/' ], formatter: '.formatter.getNameById'}
+								
+								
+								" 
+								selected="{=${masterdata_shipping_addresses>default} === 1 ? true : false}"
+								type="Detail" 
+								detailPress="onShippingAddressPress"
+								
+								app:masterdataShippingAddressId="{masterdata_shipping_addresses>id}"
+								/>
+								
+							
+						</List>
+						
+						
+						<Toolbar>
+							<Title text="{i18n>payment}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://lead"/>
+						</Toolbar>
+						<Label text="{i18n>discount}" />
+						<Select width="100%" items="{discounts>/}" 	selectedKey="{masterdata>/discount_id}">
+							<core:Item key="{discounts>id}" text="{discounts>name}" />
+						</Select>
+						
+
+						
+						<Label text="{i18n>paymentMethod}" />
+						<Select width="100%" items="{paymentMethods>/}" 	selectedKey="{masterdata>/payment_method_id}">
+							<core:Item key="{paymentMethods>id}" text="{paymentMethods>name}" />
+						</Select>
+						
+						
+						<Label text="{i18n>paymentTerm}" />
+						<Select width="100%" items="{paymentTerms>/}" 	selectedKey="{masterdata>/payment_term_id}">
+							<core:Item key="{paymentTerms>id}" text="{paymentTerms>name}" />
+						</Select>
+						
+						<Toolbar>
+							<Title text="{i18n>bankAccounts}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://delete" press="onDeleteBankAccounts"/>
+							<Button icon="sap-icon://capital-projects" press="onAddBankAccount"/>
+						</Toolbar>
+						<Label text="" />
+						<List
+							id="BankAccountsList"
+							mode="SingleSelectLeft"
+							delete="onDeleteBankAccount"
+							items="{masterdata_bank_accounts>/}"
+							includeItemInSelection="true"
+							selectionChange="onSelectionChangeBankAccount"
+							width="auto"
+							>
+							<StandardListItem
+								title="{masterdata_bank_accounts>bank_name}"
+								description="{masterdata_bank_accounts>sort_number} {masterdata_bank_accounts>acc_number}, 
+								{masterdata_bank_accounts>bic}, {masterdata_bank_accounts>iban}  
+								{masterdata_bank_accounts>note}" 
+								selected="{=${masterdata_bank_accounts>default} === 1 ? true : false}"
+								type="Detail" 
+								detailPress="onBankAccountPress"
+								app:masterdataBankAccountId="{masterdata_bank_accounts>id}"
+								/>
+								
+							
+						</List>
+						<Toolbar>
+							<Title text="{i18n>vehicle}" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://delete" press="onDeleteVehicles"/>
+							<Button icon="sap-icon://car-rental" press="onAddVehicle"/>
+						</Toolbar>
+						<Label text="" />
+						<List
+							id="VehiclesList"
+							mode="SingleSelectLeft"
+							delete="onDeleteVehicle"
+							items="{masterdata_vehicles>/}"
+							includeItemInSelection="true"
+							selectionChange="onSelectionChangeVehicle"
+							width="auto"
+							>
+							<StandardListItem
+								title="{masterdata_vehicles>name}"
+								description="{masterdata_vehicles>numberplate} {masterdata_vehicles>description}" 
+								selected="{=${masterdata_vehicles>default} === 1 ? true : false}"
+								type="Detail" 
+								detailPress="onVehiclePress"
+								app:masterdataVehicleId="{masterdata_vehicles>id}"
+								/>
+								
+							
+						</List>
+											
+					</f:content>
+				</f:SimpleForm>
+		</VBox>
+	</content>
+</Page>
+
+
+</mvc:View>

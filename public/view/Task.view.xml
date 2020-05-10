@@ -1,0 +1,70 @@
+<mvc:View
+	controllerName="sap.ui.bw.bozwo.controller.Task"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:a="sap.f"
+	xmlns="sap.m">
+<Page title="{i18n>homePageTitle}">
+	<customHeader>
+		<OverflowToolbar>
+			<mvc:XMLView viewName="sap.ui.bw.bozwo.view.Menu" />
+			
+		</OverflowToolbar>
+	</customHeader>	
+	<content>	
+		<List
+				id="taskResultList"
+				class="sapUiResponsiveMargin"
+				width="auto"
+				items="{
+						path: '/',
+						sorter: { path: 'end_date_time' }
+					}">
+				<headerToolbar>
+			<Toolbar>
+				<Button icon="sap-icon://nav-back" press="onNavBack" />
+				<Title text="{i18n>taskSearch}" />
+				<ToolbarSpacer />
+				<Select
+					id="filterSelect"
+					forceSelection="false"
+					change="onSetFilter"
+					items="{
+						path: 'people>/',
+						sorter: { path: 'first_name' }
+					}">
+						<core:Item key="{people>id}" text="{people>first_name} {people>last_name}" />
+				</Select>
+				<SearchField id="taskSearchField" width="50%" search="onSearchTask" />
+				<Button icon="sap-icon://add" press="onAddTask"/>
+			</Toolbar>
+		</headerToolbar>
+				<items>
+					<NotificationListItem
+						title="{name}"
+						description="{description}"
+						showCloseButton="false"
+						datetime="{start_date_time} - {end_date_time}"
+						unread="true"
+						priority="{parts : ['start_date_time', 'end_date_time' ], formatter: '.formatter.getPriorityByDate'}"
+						close="onItemClose"
+						press="onPress"
+						authorName="{parts : [ 'attendees', 'people>/' ], formatter: '.formatter.getAttendeesByIds'}"
+						authorPicture="sap-icon://{= RegExp(',', 'i').test(${attendees}) ? 'group' : 'employee' }"
+						app:id = "{id}"
+						>
+						<buttons>
+							<Button text="Done" type="Accept" press="onPressDone" icon="sap-icon://accept" app:id = "{id}"/>
+						</buttons>
+					</NotificationListItem>
+
+				</items>
+			</List>
+	</content>
+</Page>
+
+
+</mvc:View>

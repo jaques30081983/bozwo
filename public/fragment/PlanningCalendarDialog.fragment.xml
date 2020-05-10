@@ -1,0 +1,129 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		id="planningCalendarDialog"
+		class="sapUiContentPadding"
+		title="{i18n>planningCalendarNext}"
+		contentWidth="70%"
+		>
+		
+		<content>
+			<f:SimpleForm 
+					editable="true"
+					layout="ResponsiveGridLayout"
+					 
+					columnsM="1"
+					columnsL="2"
+					columnsXL="3"
+					>
+				<Label text="{i18n>name}"/>
+				<Input value="{pc>/name}"></Input>
+				<Label text="{i18n>description}" />
+				<Input value="{pc>/description}"></Input>
+				<Label text="{i18n>location}" />
+				<Input value="{pc>/location}"></Input>
+				<Label text="{i18n>start}"/>
+				<DateTimePicker
+					
+					value="{pc>/start_date_time}"
+					valueFormat="yyyy-MM-dd HH:mm:ss"
+					displayFormat="yyyy-MM-dd HH:mm:ss"
+					width="100%"
+					placeholder="Enter Date &amp; Time ..."
+					class="sapUiSmallMarginBottom" />
+				<Label text="{i18n>end}"/>
+				<DateTimePicker
+					
+					value="{pc>/end_date_time}"
+					valueFormat="yyyy-MM-dd HH:mm:ss"
+					displayFormat="yyyy-MM-dd HH:mm:ss"
+					width="100%"
+					placeholder="Enter Date &amp; Time ..."
+					class="sapUiSmallMarginBottom" />
+				<Label text="{i18n>status}"/>	
+				<Select width="100%" items="{statuses>/}"  forceSelection="false"	selectedKey="{pc>/status}">
+						<core:Item key="{statuses>id}" text="{statuses>name}" />
+				</Select>	
+				<Label text="{i18n>reminders}"/>
+				<TimePicker
+					value="{pc>/reminder_time}"
+					valueFormat="HH:mm"
+					displayFormat="HH:mm"
+					/>
+					
+				<Label text="{i18n>attendees}"/>
+				
+				<MultiComboBox
+					id="pcAddMultiComboBox"
+					selectionChange="handleSelectionChange"
+					selectionFinish="handleSelectionFinish"
+					
+					items="{path: 'people>/',
+			          sorter: {path : 'first_name'}
+			          }">
+					<core:Item key="{people>id}" app:email="{people>email}" text="{people>first_name} {people>last_name}"/>
+				</MultiComboBox>
+				
+				
+				
+					
+				</f:SimpleForm>
+			<l:Grid defaultSpan="L4 M6 S8" class="sapUiSmallMarginTop">
+				<l:content>
+		
+					<!-- Third / Half width items -->
+		
+					<ObjectListItem id="productitem-small-0"
+						type="Active"
+						title="{i18n>project}"
+						intro="{i18n>projectCreate}"
+						press="onAddProjectDialog"
+						icon="sap-icon://business-one" >
+					</ObjectListItem>
+					<ObjectListItem id="productitem-small-1"
+						type="Active"
+						title="{i18n>appointment}"
+						intro="{i18n>appointmentCreate}"
+						press="onAddAppointment"
+						icon="sap-icon://appointment" >
+					</ObjectListItem>
+					<ObjectListItem id="productitem-small-2"
+						type="Active"
+						title="{i18n>hint}"
+						intro="{i18n>hintCreate}"
+						press="onAddHint"
+						icon="sap-icon://hint">
+					</ObjectListItem>
+					
+					<ObjectListItem id="productitem-small-3"
+						type="Active"
+						title="{i18n>task}"
+						intro="{i18n>taskCreate}"
+						press="onAddTask"
+						icon="sap-icon://task" >
+					</ObjectListItem>
+					
+					<ObjectListItem id="productitem-small-4"
+						type="Active"
+						title="{i18n>birthday}"
+						intro="{i18n>birthdayCreate}"
+						press="onAddBirthday"
+						icon="sap-icon://leads" >
+					</ObjectListItem>
+		
+		
+		
+				</l:content>
+			</l:Grid>
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>close}"
+				press="onCloseDialog"/>		
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>

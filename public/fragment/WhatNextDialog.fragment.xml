@@ -1,0 +1,77 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		id="whatNextDialog"
+		class="sapUiContentPadding"
+		title="{i18n>masterdataNext} ({masterdata>/company_name_1} {masterdata>/company_name_2} {masterdata>/first_name} {masterdata>/last_name})">
+		
+		<content>
+<l:Grid defaultSpan="L4 M6 S6" class="sapUiSmallMarginTop">
+		<l:content>
+
+			<!-- Third / Half width items -->
+
+			<ObjectListItem id="productitem-small-0"
+				type="Active"
+				title="{i18n>project}"
+				intro="{i18n>projectCreate}"
+				press="onAddContactPerson"
+				icon="sap-icon://business-one" >
+			</ObjectListItem>
+			<ObjectListItem id="productitem-small-1"
+				type="Active"
+				title="{i18n>rental}"
+				intro="{i18n>rentalCreate}"
+				icon="sap-icon://retail-store" >
+			</ObjectListItem>
+			<ObjectListItem id="productitem-small-2"
+				type="Active"
+				title="{i18n>offer}"
+				intro="{i18n>offerCreate}"
+				icon="sap-icon://customer-briefing">
+			</ObjectListItem>
+			
+			<ObjectListItem id="productitem-small-3"
+				type="Active"
+				title="{i18n>order}"
+				intro="{i18n>orderCreate}"
+				icon="sap-icon://sales-order" >
+			</ObjectListItem>
+			<ObjectListItem id="productitem-small-4"
+				type="Active"
+				title="{i18n>delivery}"
+				intro="{i18n>deliveryCreate}"
+				icon="sap-icon://shipping-status" >
+			</ObjectListItem>
+			<ObjectListItem id="productitem-small-5"
+				type="Active"
+				title="{i18n>invoice}"
+				intro="{i18n>invoiceCreate}"
+				icon="sap-icon://simple-payment" >
+			</ObjectListItem>
+
+			<ObjectListItem id="productitem-small-6"
+				type="Active"
+				title="{i18n>credit}"
+				intro="{i18n>creditCreate}"
+				icon="sap-icon://payment-approval" >
+			</ObjectListItem>
+			<ObjectListItem id="productitem-small-7"
+				type="Active"
+				title="{i18n>reminder}"
+				intro="{i18n>reminderCreate}"
+				icon="sap-icon://monitor-payments">
+			</ObjectListItem>
+
+		</l:content>
+	</l:Grid>
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>close}"
+				press="onCloseDialog"/>		
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>
