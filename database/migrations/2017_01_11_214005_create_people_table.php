@@ -33,7 +33,9 @@ class CreatePeopleTable extends Migration
 			$table->string('phone');
 			$table->string('mobile');
 			$table->string('fax');
-			$table->string('email');
+            $table->string('email');
+            $table->string('email_from');
+            $table->string('email_signature');
 			
 			$table->string('gender');
 			$table->date('birthday');

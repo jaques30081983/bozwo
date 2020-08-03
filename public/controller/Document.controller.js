@@ -6,12 +6,14 @@ sap.ui.define([
 		"sap/ui/bw/bozwo/util/formatter",
 		"sap/ui/bw/bozwo/util/api",
 		"sap/ui/bw/bozwo/util/email",
+		"sap/ui/bw/bozwo/util/morph",
+		"sap/ui/bw/bozwo/util/letter",
 		"sap/m/PDFViewer",
 		'sap/m/Dialog',
 		'sap/m/Button',
 		'sap/m/Text',
 		"sap/ui/model/Filter"
-	], function(jQuery, Controller, JSONModel, History, formatter, api, email, PDFViewer, Dialog, Button, Text, Filter) {
+	], function(jQuery, Controller, JSONModel, History, formatter, api, email, morph, letter, PDFViewer, Dialog, Button, Text, Filter) {
 	"use strict";
 	
 
@@ -334,12 +336,21 @@ sap.ui.define([
                 
                 //Check for subproject
                 
-                    //Check for project if its not a subproject
+					//Check for project if its not a subproject
+					var oToday = new Date();
+					var oTodayStart =
+						oToday.getFullYear() + "-" +
+						("0" + (oToday.getMonth()+1)).slice(-2) + "-" +
+						("0" + oToday.getDate()).slice(-2) + " 00:00:00";
+					var oTodayEnd =
+						oToday.getFullYear() + "-" +
+						("0" + (oToday.getMonth()+1)).slice(-2) + "-" +
+						("0" + oToday.getDate()).slice(-2) + " 23:59:00";
                     if(project_id == 0){
                         var oModel = new JSONModel(
                             {
-                            "start_date_time":"1970-01-01 00:00:00",
-                            "end_date_time":"1970-01-01 23:59:00",
+                            "start_date_time":oTodayStart,
+                            "end_date_time":oTodayEnd,
                             "days":1,
                             "days_off":0,
                             "days_used":1,
@@ -1380,6 +1391,18 @@ sap.ui.define([
                 var posTopCat = 1;
 				var posCat = 1;
 				var posItem = 1;
+
+				var oToday = new Date();
+				var last_item_start_date_time =
+					oToday.getFullYear() + "-" +
+					("0" + (oToday.getMonth()+1)).slice(-2) + "-" +
+					("0" + oToday.getDate()).slice(-2) + " 00:00:00";
+				var last_item_end_date_time =
+					oToday.getFullYear() + "-" +
+					("0" + (oToday.getMonth()+1)).slice(-2) + "-" +
+					("0" + oToday.getDate()).slice(-2) + " 23:59:00";
+
+				
 				
 				for (var key in oModel) {
                     //Check for cat by name
@@ -1406,6 +1429,8 @@ sap.ui.define([
 							var itemKey = key2;
 							var itemId = oModel[key]['items'][key2]['id'];
 						}
+						last_item_start_date_time = oModel[key]['items'][key2]['start_date_time'];
+						last_item_end_date_time = oModel[key]['items'][key2]['end_date_time'];
 					}
 					
 				}
@@ -1468,8 +1493,8 @@ sap.ui.define([
 				        "discount_id" : this.getView().getModel("document").getProperty("/discount_id"),
 				        "discount" : this.getView().getModel("document").getProperty("/discount"),
 				        "tax_id" : 13,
-                        "start_date_time" : this.getView().getModel("project").getProperty("/start_date_time"),
-				        "end_date_time" : this.getView().getModel("project").getProperty("/end_date_time"),
+                        "start_date_time" : last_item_start_date_time,
+				        "end_date_time" : last_item_end_date_time,
 				        "days" : this.getView().getModel("project").getProperty("/days"),
                         "days_off" : this.getView().getModel("project").getProperty("/days_off"),
                         "days_used" : this.getView().getModel("project").getProperty("/days_used"),
@@ -1497,8 +1522,8 @@ sap.ui.define([
 				        "discount_id" : this.getView().getModel("document").getProperty("/discount_id"),
 				        "discount" : this.getView().getModel("document").getProperty("/discount"),
 				        "tax_id" : 13,
-				        "start_date_time" : this.getView().getModel("project").getProperty("/start_date_time"),
-				        "end_date_time" : this.getView().getModel("project").getProperty("/end_date_time"),
+				        "start_date_time" : last_item_start_date_time,
+				        "end_date_time" : last_item_end_date_time,
 				        "days" : this.getView().getModel("project").getProperty("/days"),
                         "days_off" : this.getView().getModel("project").getProperty("/days_off"),
                         "days_used" : this.getView().getModel("project").getProperty("/days_used"),
@@ -2090,6 +2115,31 @@ sap.ui.define([
 		},onEmailSend: function (oEvent) {
 			//Send Email
 			email.onEmailSend(this);
+
+		},onMorphDocument: function (oEvent) { 
+			var oDocumentNumber = this.getView().getModel("document").getProperty("/number");
+			morph.onMorphDocument(this,oDocumentModel,Id,oDocumentNumber);
+
+		},onMorphCloseDialog : function () {
+			morph.onMorphCloseDialog(this);
+		
+		},onMorphRequest : function () {
+			morph.onMorphRequest(this);
+		
+		},onLetterSelectPerson: function (oEvent) { 
+			letter.onLetterSelectPerson(this,oEvent);
+
+		},onLetterDocument: function (oEvent) { 
+			var oDocumentNumber = this.getView().getModel("document").getProperty("/number");
+			var oPersonId = this.getView().getModel("document").getProperty("/person_id");
+			letter.onLetterDocument(this,oDocumentModel,Id,oDocumentNumber,oPersonId);
+
+		},onLetterCloseDialog : function () {
+			letter.onLetterCloseDialog(this);
+		
+		},onLetterSend: function (oEvent) {
+			//Send Letter
+			letter.onLetterSend(this);
 
 		},onDocumentResourcesDeletePress: function(oEvent) {
 			var oRow = oEvent.getParameter("row");

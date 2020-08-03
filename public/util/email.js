@@ -115,12 +115,16 @@ sap.ui.define([
 				if(sap.ui.bw.bozwo.User.people_id == oClerk[key]['id']){
 					clerk_first_name = oClerk[key]['first_name'];
 					clerk_last_name = oClerk[key]['last_name'];
-					clerk_email = oClerk[key]['email'];
+					clerk_email = oClerk[key]['email_from'];
 				}
 			}
 
 			//CreateSubject
-			var mailSubject = document_name+" "+number+" -> "+oProject['name']+" "+oProject['number'];
+			var projectInfo = ''
+			if(oProject['number'] !== undefined){
+				projectInfo = " -> "+oProject['name']+" "+oProject['number']
+			}
+			var mailSubject = document_name+" "+number+projectInfo;
 
 			//Create Message
 			var mailMessage = mailSalutation+" "

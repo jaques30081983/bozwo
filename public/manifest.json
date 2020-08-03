@@ -104,6 +104,16 @@
 				"mailMessage":"",
 				"mailAttachments":[]
 				}
+	  },
+	  "letter": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    
+		"data":{
+				"letterFrom":"Testman", 
+				"letterTo":"Testfrau",
+				"letterStatus":"OK",
+				"letterBalanceCents":0
+				}
 	  }
 	},
 	"resources": {

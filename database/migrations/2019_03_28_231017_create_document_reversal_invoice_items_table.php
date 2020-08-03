@@ -42,7 +42,7 @@ class CreateDocumentReversalInvoiceItemsTable extends Migration
             
             $table->string('name');
             $table->string('description');
-            $table->integer('quantity')->unsigned();
+            $table->decimal('quantity', 40, 2);
             $table->decimal('price', 40, 2);
             
             $table->integer('unit_id')->unsigned();

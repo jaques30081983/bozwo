@@ -1,0 +1,89 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:upload="sap.m.upload"
+>
+	<Dialog
+		id="letterSendDialog"
+		class="sapUiContentPadding"
+		title="{i18n>letterSend}"
+		contentWidth="70%"
+		>
+		
+		<content>
+			<f:SimpleForm 
+					editable="true"
+					layout="ResponsiveGridLayout"
+					 
+					columnsM="1"
+					columnsL="2"
+					columnsXL="3"
+					>
+
+				<Label text="{i18n>letterStatus}"/>
+				<Input enabled="false" value="{letter>/letterStatus}"></Input>
+
+				<Label text="{i18n>letterBalance}"/>
+				<Input enabled="false" value="{path:'letter>/letterBalanceCents', type:'sap.ui.model.type.Currency'}"></Input>
+				<Label text="{i18n>customer}" />
+				<Input enabled="false" value="{customer>/customer_name}, {customer>/street} {customer>/house_number}, {customer>/zip} {customer>/city}"></Input>
+				<Label text="{i18n>person}" />
+				<Select enabled="false" width="100%" items="{path:'customer_people>/',  formatter: '.formatter.addDeselectOption'}"  forceSelection="false"	selectedKey="{letter>/customer_person_id}" change="onletterSelectPerson">
+					<core:Item key="{customer_people>id}" text="{customer_people>first_name} {customer_people>last_name}" />
+				</Select>
+
+
+				<Label text="{i18n>letterAttachment}"/>
+				
+
+		<upload:UploadSet
+				id="UploadSet"
+				instantUpload="false"
+				showIcons="true"
+				uploadEnabled="false"
+				terminationEnabled="true"
+				enabled="false"
+				maxFileNameLength="255"
+				maxFileSize="200"
+				
+				uploadUrl="api/0/0/0/0/upload"
+				beforeUploadStarts="onletterBeforeUploadStarts"
+				
+				uploadCompleted="onletterUploadCompleted"
+				items="{model: 'letter', path: '/letterAttachments', templateShareable: false}">
+			<upload:toolbar>
+
+			</upload:toolbar>
+			<upload:items>
+				<upload:UploadSetItem
+						enabledEdit="false"
+						visibleEdit="False"
+						enabledRemove="false"
+						visibleRemove="false"
+						fileName="{letter>fileName}"
+						mediaType="{letter>mediaType}"
+						url="{letter>url}"
+						thumbnailUrl="{letter>thumbnailUrl}"
+						uploadState="{letter>uploadState}">
+
+				</upload:UploadSetItem>
+			</upload:items>
+		</upload:UploadSet>
+				</f:SimpleForm>
+
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>send}"
+				press="onLetterSend"/>
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>close}"
+				press="onLetterCloseDialog"/>	
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

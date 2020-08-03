@@ -6,12 +6,13 @@ sap.ui.define([
 		"sap/ui/bw/bozwo/util/formatter",
 		"sap/ui/bw/bozwo/util/api",
 		"sap/ui/bw/bozwo/util/email",
+		"sap/ui/bw/bozwo/util/letter",
 		"sap/m/PDFViewer",
 		'sap/m/Dialog',
 		'sap/m/Button',
 		'sap/m/Text',
 		"sap/ui/model/Filter"
-	], function(jQuery, Controller, JSONModel, History, formatter, api, email, PDFViewer, Dialog, Button, Text, Filter) {
+	], function(jQuery, Controller, JSONModel, History, formatter, api, email, letter, PDFViewer, Dialog, Button, Text, Filter) {
 	"use strict";
 	
 	sap.ui.model.SimpleType.extend("sap.ui.model.type.Boolean", {
@@ -2386,6 +2387,44 @@ sap.ui.define([
 
 			}
 
+		},onProjectLetterDocument: function (oEvent) { 
+
+			var documentKey = this.getView().byId('projectDocumentsList').getSelectedItem();
+			console.log(documentKey);
+			if(typeof documentKey === 'undefined' || documentKey === null || documentKey === ''){
+				var oBundle = this.getView().getModel("i18n").getResourceBundle();
+				sap.m.MessageToast.show(oBundle.getText("firstSelectDocument"));
+				
+			}else{
+				var documentModel = documentKey.data("documentModel");
+				var documentId = documentKey.data("documentId");
+				var documentNumber = documentKey.data("documentNumber");
+
+				var personId = this.getView().getModel("project").getProperty("/customer_person_id");
+
+				letter.onLetterDocument(this,documentModel,documentId,documentNumber,personId);
+
+			}
+
+		},onSubprojectLetterDocument: function (oEvent) { 
+
+			var documentKey = this.getView().byId('subprojectDocumentsList').getSelectedItem();
+			console.log(documentKey);
+			if(typeof documentKey === 'undefined' || documentKey === null || documentKey === ''){
+				var oBundle = this.getView().getModel("i18n").getResourceBundle();
+				sap.m.MessageToast.show(oBundle.getText("firstSelectDocument"));
+				
+			}else{
+				var documentModel = documentKey.data("documentModel");
+				var documentId = documentKey.data("documentId");
+				var documentNumber = documentKey.data("documentNumber");
+
+				var personId = this.getView().getModel("project").getProperty("/customer_person_id");
+
+				letter.onLetterDocument(this,documentModel,documentId,documentNumber,personId);
+
+			}
+
 		},onEmailSelectPerson: function (oEvent) { 
 			email.onEmailSelectPerson(this,oEvent);
 
@@ -2404,6 +2443,20 @@ sap.ui.define([
 			//Send Email
 			email.onEmailSend(this);
 
+		},onLetterSelectPerson: function (oEvent) { 
+			letter.onLetterSelectPerson(this,oEvent);
+
+		},onLetterDocument: function (oEvent) { 
+			var oDocumentNumber = this.getView().getModel("document").getProperty("/number");
+			var oPersonId = this.getView().getModel("document").getProperty("/person_id");
+			letter.onLetterDocument(this,oDocumentModel,Id,oDocumentNumber,oPersonId);
+
+		},onLetterCloseDialog : function () {
+			letter.onLetterCloseDialog(this);
+		
+		},onLetterSend: function (oEvent) {
+			//Send Letter
+			letter.onLetterSend(this);
 		},onProjectResourcesDeletePress: function(oEvent) {
 			var oRow = oEvent.getParameter("row");
 			var oContext = oRow.getBindingContext("projectResource");

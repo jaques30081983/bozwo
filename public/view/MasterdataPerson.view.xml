@@ -66,6 +66,12 @@
 						
 						<Label text="{i18n>email}" />
 						<Input value="{person>/email}" type="Email" />
+
+						<Label text="{i18n>mailSender}" visible= "{ parts : [ {path: 'person>/group'}, {path:'people_groups>/'} ], formatter: '.formatter.checkPeopleGroup' }" />
+						<Input value="{person>/email_from}" type="Email" visible= "{ parts : [ {path: 'person>/group'}, {path:'people_groups>/'} ], formatter: '.formatter.checkPeopleGroup' }" />
+
+						<Label text="{i18n>mailSignature}" visible= "{ parts : [ {path: 'person>/group'}, {path:'people_groups>/'} ], formatter: '.formatter.checkPeopleGroup' }" />
+						<Input value="{person>/email_signature}" type="Text" visible= "{ parts : [ {path: 'person>/group'}, {path:'people_groups>/'} ], formatter: '.formatter.checkPeopleGroup' }" />
 						
 						<Toolbar>
 							<Title text="{i18n>details}" level="H5" titleStyle="H5"/>

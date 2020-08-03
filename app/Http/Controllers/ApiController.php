@@ -10,6 +10,7 @@ use App\CustomerBankAccount as CustomerBankAccount;
 use App\Mail\SendDocument;
 
 use Fpdf;
+use SoapClient;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -100,6 +101,17 @@ class ApiController extends Controller
     //GET Requests
     public function getApi(Request $request, $model = null, $id = null, $relation = null, $rid = null, $action = null, $string = null, $filter = null)
     {
+        //Hybrid letter configuration
+        // Login-Eingaben auslesen
+        $hybrid_letter_username = '';
+        $hybrid_letter_password	= '';
+
+        // Zufaelligen Salz-Wert erstellen
+        $hybrid_letter_salt = substr(md5(uniqid()), 0, 8);
+
+        // Passwort-Hash generieren
+        $hybrid_letter_passwordHash	= md5(md5($hybrid_letter_password) . $hybrid_letter_salt);
+
         //Create model name
         $modelName='App\\' . $model;
         
@@ -975,7 +987,13 @@ class ApiController extends Controller
             
             $data_response = $newRowModelId;
             return response()->json($data_response);
-            
+        }elseif($action == "hybridLetterBalance"){
+         
+            // SOAP-Schnittstelle oeffnen
+            $oekopost= new SoapClient('https://www.oekopost.de/soap/?wsdl');
+            $result = $oekopost->getAccountBalance($hybrid_letter_username, $hybrid_letter_passwordHash, $hybrid_letter_salt);
+					
+            return response()->json($result);
         }elseif($action == "allToGoogleCalendar"){
             //Get incomplete projects
             $projects = $modelName::select('id','name','description','location','start_date_time','end_date_time','reminder_time','attendees')->where('google_event_id','')->get();
@@ -1959,17 +1977,78 @@ class ApiController extends Controller
                 
                 $newModel = $relationModelName::create($newModel);
                 $newDocumentId= $newModel->id;
-               
+                
+                $documentIdName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $model));
+                $documentIdName = $documentIdName."_id";
+            
+                $newDocumentIdName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $relation));
+                $newDocumentIdName = $newDocumentIdName."_id";
+
                 //Document items
                 $relations = $modelName::find($id)->items->toArray();
                 foreach ($relations as $newItem) {
-                    $newItem['ref_id'] = $newDocumentId;
-                    $newItem['created_user_id'] = Auth::user()->id;
-                    $newItem['updated_user_id'] = Auth::user()->id;
-                    $newItem['created_at'] = Carbon::now();
-                    $newItem['updated_at'] = Carbon::now();
-                   
-                    $newModel->items()->create($newItem);
+                    //Top level
+                    if($newItem['ref_id'] == 0){
+                        unset($newItem[$documentIdName]);
+                        $newItem[$newDocumentIdName] = $newDocumentId;
+
+                        $newItem['ref_id'] = 0;
+                        $newItem['created_user_id'] = Auth::user()->id;
+                        $newItem['updated_user_id'] = Auth::user()->id;
+                        $newItem['created_at'] = Carbon::now();
+                        $newItem['updated_at'] = Carbon::now();
+                        
+                        if($relation == 'DocumentReversalInvoice'){
+                            $newItem['price'] = $newItem['price'] * -1;
+                        }
+
+                        $newItemId = $newModel->items()->create($newItem)->id;
+
+                        //First level
+                        foreach($relations as $newItem2){
+                            if($newItem['id'] == $newItem2['ref_id']){
+                                unset($newItem2[$documentIdName]);
+                                $newItem2[$newDocumentIdName] = $newDocumentId;
+        
+                                $newItem2['ref_id'] = $newItemId;
+                                $newItem2['created_user_id'] = Auth::user()->id;
+                                $newItem2['updated_user_id'] = Auth::user()->id;
+                                $newItem2['created_at'] = Carbon::now();
+                                $newItem2['updated_at'] = Carbon::now();
+
+                                if($relation == 'DocumentReversalInvoice'){
+                                    $newItem2['price'] = $newItem2['price'] * -1;
+                                }
+                            
+                                $newItemId2 = $newModel->items()->create($newItem2)->id;
+
+                            
+                                //Second Level
+                                foreach($relations as $newItem3){
+                                    if($newItem2['id'] == $newItem3['ref_id']){
+
+                                        unset($newItem3[$documentIdName]);
+                                        $newItem3[$newDocumentIdName] = $newDocumentId;
+                
+                                        $newItem3['ref_id'] = $newItemId2;
+                                        $newItem3['created_user_id'] = Auth::user()->id;
+                                        $newItem3['updated_user_id'] = Auth::user()->id;
+                                        $newItem3['created_at'] = Carbon::now();
+                                        $newItem3['updated_at'] = Carbon::now();
+
+                                        if($relation == 'DocumentReversalInvoice'){
+                                            $newItem3['price'] = $newItem3['price'] * -1;
+                                        }
+                                    
+                                        $newItemId3 = $newModel->items()->create($newItem3)->id;
+                                        
+            
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
                 }
 
             }
@@ -2000,6 +2079,75 @@ class ApiController extends Controller
             Storage::deleteDirectory('attachments/'.$sessionId.'/');
 
             return response()->json(['status' => '1','data' => $data['mailTo']]);
+                
+        }elseif($action=='sendLetter'){
+            //Send letter
+            $data = $request->json()->all();
+
+            /**************** Settings begin **************/
+
+            // Login-Eingaben auslesen
+            $username 		= '';
+            $password		= '';
+
+            // Zufaelligen Salz-Wert erstellen
+            $salt			= substr(md5(uniqid()), 0, 8);
+
+            // Passwort-Hash generieren
+            $passwordHash	= md5(md5($password) . $salt);
+
+            // SOAP-Schnittstelle oeffnen
+            $oekopost 		= new SoapClient('https://www.oekopost.de/soap/?wsdl');
+
+            
+            $filename     = base_path().'/spool/'.$data['letterAttachments'][0]['fileName'];  // binary file to send
+            $filetype     = "PDF";  // e.g. HTML, DOC, PDF, etc.
+                          
+            $v_country_code = $data['customer_country_code'];
+
+            $v_eu = array('AT', 'BE', 'BG', 'CY', 'CZ', 'DK', 'EE', 'EL', 'ES', 'FI', 'FR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK', 'UK');
+            if (in_array($v_country_code, $v_eu)) {
+            $letter_country = '_EUR';
+            }elseif($v_country_code == "DE"){
+            $letter_country = 'DE';
+            }elseif($v_country_code == ""){
+            $letter_country = 'NONE';
+            }else{
+                
+            $letter_country = '_WELT';	
+            }
+
+                            
+            $letter_envelope = 'C6'; //C6 oder C5
+            $letter_color = false; // true (farbig) false (SW)
+            $letter_duplex = true; //
+
+            /**************** Settings end ****************/
+                
+            // PDF-Datei einlesen
+            $dataPDF = file_get_contents($filename);
+            
+            // Base64
+            //$data = base64_encode($data);
+
+            // MD5-hash der Daten berechnen
+            $dataHash 	= md5($dataPDF);
+                                 
+            // submitPDFLetter-Funktion der Schnittstelle aufrufen
+            $result = $oekopost->submitPDFLetter($username, $passwordHash, $salt,
+                                                $dataPDF, $dataHash,
+                                                time(), // Brief sofort senden
+                                                $letter_color,
+                                                $letter_duplex,
+                                                $letter_envelope,
+                                                $letter_country);
+                    
+
+            
+
+
+
+            return response()->json(['status' => $result['status'], 'jobId' => $result['jobID'],'chargedCents' => $result['chargedCents']]);
                 
         }elseif($action=='upload'){
             //Upload files

@@ -7,7 +7,7 @@
 	<Dialog
 		id="documentAddDialog"
 		class="sapUiContentPadding"
-		title="{i18n>documentCreate} - {documents>key}"
+		title="{i18n>documentCreate}"
 		contentWidth="70%"
 		>
 		

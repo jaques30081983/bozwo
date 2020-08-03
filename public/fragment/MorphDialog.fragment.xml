@@ -1,0 +1,50 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:upload="sap.m.upload"
+>
+	<Dialog
+		id="morphDialog"
+		class="sapUiContentPadding"
+		title="{i18n>documentMorph}"
+		contentWidth="70%"
+		>
+		
+		<content>
+			<f:SimpleForm 
+					editable="true"
+					layout="ResponsiveGridLayout"
+					 
+					columnsM="1"
+					columnsL="2"
+					columnsXL="3"
+					>
+
+				<Label text="{i18n>morphFromDocument}"/>
+				<Input enabled="false" value="{morph>/document_id} - {morph>/document_model} - {morph>/document_number}" />
+				
+				<Label text="{i18n>morphToDocument}" />
+				<Select width="100%" items="{path:'documents>/',  formatter: '.formatter.addDeselectOption'}"  forceSelection="false"	selectedKey="{morph>/document_new_model}" >
+					<core:Item key="{documents>model}" text="{documents>name}" />
+				</Select>
+				
+				<CheckBox text="{i18n>gotoNewDocument}" selected="{path: 'morph>/goto_new_document', type: 'sap.ui.model.type.Boolean'}"/>	
+								
+				</f:SimpleForm>
+
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>morph}"
+				press="onMorphRequest"/>
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>close}"
+				press="onMorphCloseDialog"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

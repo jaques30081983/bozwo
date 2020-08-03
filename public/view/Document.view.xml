@@ -229,7 +229,7 @@
 					<Title text="{document>/number} {customer>/customer_name}" level="H4" titleStyle="H4"/>
 					<ToolbarSpacer />
 					<Button icon="sap-icon://save" press="onSaveDocument"/>
-					<Button icon="sap-icon://duplicate" press="onDuplicateDocument" tooltip="{i18n>duplicate}"/>
+					<Button icon="sap-icon://duplicate" press="onMorphDocument" tooltip="{i18n>documentMorph}"/>
 					<Button icon="sap-icon://show" press="onPreviewDocument" tooltip="{i18n>showPreview}"/>
 				
 					<Button icon="sap-icon://print" press="onCreateDocument" tooltip="{i18n>printDocument}"/>

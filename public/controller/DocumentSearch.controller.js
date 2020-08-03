@@ -3,8 +3,9 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/bw/bozwo/util/formatter',
+		'sap/ui/bw/bozwo/util/api',
 		'sap/ui/model/Filter'
-	], function(jQuery, Controller, JSONModel, formatter, Filter) {
+	], function(jQuery, Controller, JSONModel, formatter, api, Filter) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.bw.bozwo.controller.DocumentSearch", {
@@ -211,6 +212,8 @@ sap.ui.define([
 		  onAddDocument : function(oEvent){
 			  this.byId("documentAddDialog").close();
 			  var oDocumentModel=this.byId("filterSelect").getSelectedKey();
+
+			  /*
 			  //Create busy Dialog
 			  var oBundle = this.getView().getModel("i18n").getResourceBundle();
 			  var busyDialog = new sap.m.BusyDialog({
@@ -235,9 +238,26 @@ sap.ui.define([
 			  });	
 			  //oModel.attachRequestFailed(function(){sap.m.MessageToast.show(oBundle.getText("sessionEnded"));sap.m.URLHelper.redirect("/login");});
 			  
-			  
-			  
-			  
+			  */
+			 //Post to api 
+			 var oParameter = this.getView().getModel("document").getJSON();
+			 var oModel = api.callApi(this,oDocumentModel+"/0",oParameter,'POST');
+			 
+
+			//On request completed
+			 var parent = this;
+			  oModel.attachRequestCompleted(function(){
+	
+				//Nav to created document
+				var newId = oModel.getProperty("/modelId");
+				parent.getOwnerComponent().getRouter().navTo("document",{
+					Id: newId,
+					model: oDocumentModel,
+					origin: "document-search"
+				});
+				  
+
+			  });	
 			  
 			  
 			  

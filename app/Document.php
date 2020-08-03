@@ -1494,6 +1494,12 @@ class Document extends Model
             //$document_template = 'App\\Document'::where("role", '=', $role)->get();
             $document_template = 'App\\Document'::where('role', $role)->first();;
             $units = 'App\\Unit'::all();
+            $taxes = 'App\\Tax'::all();
+            foreach($taxes as $key => $value){
+                $taxes[$key]['sumNetto'] = 0;
+                $taxes[$key]['sumTax'] = 0;
+            }
+
 
         if($action == 'preview_stream'){
             $document = $model;
@@ -1727,7 +1733,45 @@ class Document extends Model
                     return $row['short_name'];
             }
         }
+
+        function getTaxName($id, $taxes)
+        {
+            foreach ($taxes as $row)
+            {
+                if ($row['id'] == $id)
+                    return $row['name'];
+            }
+        }
+
+        function getTaxShortName($id, $taxes)
+        {
+            foreach ($taxes as $row)
+            {
+                if ($row['id'] == $id)
+                    return $row['short_name'];
+            }
+        }
         
+
+        function getTaxPercentage($id, $taxes)
+        {
+            foreach ($taxes as $row)
+            {
+                if ($row['id'] == $id)
+                    return $row['percent'];
+            }
+        }
+
+        function addTaxNettoSum($id, $taxes, $sumTax, $sumNetto)
+        {
+            foreach ($taxes as $key => $row )
+            {
+                if ($row['id'] == $id){
+                    $taxes[$key]['sumNetto'] = $taxes[$key]['sumNetto'] + $sumNetto;
+                    $taxes[$key]['sumTax'] = $taxes[$key]['sumTax'] + $sumTax;
+                }      
+            }
+        }
         
         
         //Create pdf
@@ -1829,7 +1873,7 @@ class Document extends Model
         
        
         
-        
+        //Calculation vars
         $row_material_sum = 0;
         $row_resource_sum = 0;
         //var $cat_sum = 0;
@@ -1837,6 +1881,12 @@ class Document extends Model
         $total_resources_sum = 0;
         $total_materials_discount = 0;
         $total_resources_discount = 0;
+        $total_taxes_sum = 0;
+
+        $show_materials_sum = false;
+        $show_resources_sum = false;
+
+        $subproject_discount_percentage = 0;
         
 
         //Write and calculate rows
@@ -1845,18 +1895,29 @@ class Document extends Model
             //$row->type = "Type03";
             $name = iconv("UTF-8", "ISO-8859-1", $row->name);
             
-            //count
-            
+            //Count Items
             if($row->type == 2){
                 //Count materials
             	$row_sum= $row->price * $row->quantity * $row->factor;
                 $total_materials_sum = $total_materials_sum + $row_sum;
+
+                $row_sum_discounted = $row_sum - (($row_sum/ 100)*$subproject_discount_percentage);
+                $row_taxes_sum = (($row_sum_discounted / 100) * getTaxPercentage($row->tax_id,$taxes)); 
                 
+                addTaxNettoSum($row->tax_id,$taxes,$row_taxes_sum,$row_sum);
+
+                $show_materials_sum = true;
             }elseif($row->type == 3){
             	//Count resources
             	$row_sum= $row->price * $row->quantity * $row->days + ($row->price * $row->quantity * $row->days_off * $row->factor);
                 $total_resources_sum = $total_resources_sum + $row_sum;
-                
+
+                $row_sum_discounted = $row_sum - (($row_sum/ 100)*$subproject_discount_percentage);
+                $row_taxes_sum = (($row_sum_discounted / 100) * getTaxPercentage($row->tax_id,$taxes)); 
+
+
+                addTaxNettoSum($row->tax_id,$taxes,$row_taxes_sum,$row_sum);
+                $show_resources_sum = true;
             }
            
             
@@ -1878,6 +1939,7 @@ class Document extends Model
                 $subproject_discount_sum = 0;
                 $subproject_materials_discount_sum = 0;
                 $subproject_resources_discount_sum = 0;
+                $subproject_discount_percentage = $row->discount;
                 foreach($items as &$row_cat) {
                     if($row->id == $row_cat->ref_id){
                         //$subproject_sum = ($row_c->price * $row_c->quantity)+$subproject_sum;
@@ -2054,34 +2116,42 @@ class Document extends Model
         
         $pdf->SetLineWidth(0.1);
         $pdf->Line(100, $pdf->GetY(), 190, $pdf->GetY());
-        
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->Cell(0,10,'Summe Material:  '.money_format('%!n', $total_materials_sum).EUR,0,0,'R');
-        
-        //Calculate discount for materials
-        //$pdf->CheckPageBreak(55,$tplIdx2,$document_template['template_pdml_header_following']);
-        $total_materials_sum = $total_materials_sum - $total_materials_discount;
-        $pdf->SetY($pdf->GetY()+5);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->Cell(0,10,'Rabatt auf Material:  -'.money_format('%!n', $total_materials_discount).EUR,0,0,'R');
-        $pdf->SetY($pdf->GetY()+5);
-        
+
+        //Materials
+        if($show_materials_sum){
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(0,10,'Summe Material:  '.money_format('%!n', $total_materials_sum).EUR,0,0,'R');
+            
+            //Calculate discount for materials
+            //$pdf->CheckPageBreak(55,$tplIdx2,$document_template['template_pdml_header_following']);
+            $total_materials_sum = $total_materials_sum - $total_materials_discount;
+            $pdf->SetY($pdf->GetY()+5);
+            $pdf->SetFont('Arial', '', 10);
+            if($total_materials_discount > 0){
+                $pdf->Cell(0,10,'Rabatt auf Material:  -'.money_format('%!n', $total_materials_discount).EUR,0,0,'R');
+                $pdf->SetY($pdf->GetY()+5);
+            }
+        }
      
         //Resources
-        $pdf->CheckPageBreak(55,$tplIdx2,$document_template['template_pdml_header_following']);
-        $pdf->SetY($pdf->GetY()+10);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->Cell(0,10,'Summe Resourcen:  '.money_format('%!n', $total_resources_sum).EUR,0,0,'R');
-        
-        
-        //Calculate discount for resources
-        $pdf->CheckPageBreak(55,$tplIdx2,$document_template['template_pdml_header_following']);
-        $total_resources_sum = $total_resources_sum - $total_resources_discount;
-        $pdf->SetY($pdf->GetY()+5);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->Cell(0,10,'Rabatt auf Resourcen:  -'.money_format('%!n', $total_resources_discount).EUR,0,0,'R');
-        $pdf->SetY($pdf->GetY()+5);
-        
+        if($show_resources_sum){
+            $pdf->CheckPageBreak(55,$tplIdx2,$document_template['template_pdml_header_following']);
+            $pdf->SetY($pdf->GetY()+10);
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(0,10,'Summe Resourcen:  '.money_format('%!n', $total_resources_sum).EUR,0,0,'R');
+            
+            
+            //Calculate discount for resources
+            $pdf->CheckPageBreak(55,$tplIdx2,$document_template['template_pdml_header_following']);
+            $total_resources_sum = $total_resources_sum - $total_resources_discount;
+            $pdf->SetY($pdf->GetY()+5);
+            $pdf->SetFont('Arial', '', 10);
+            if($total_resources_discount > 0){
+                $pdf->Cell(0,10,'Rabatt auf Resourcen:  -'.money_format('%!n', $total_resources_discount).EUR,0,0,'R');
+                $pdf->SetY($pdf->GetY()+5);
+            }
+            
+        }
         
         //SubTotal netto
         $pdf->CheckPageBreak(55,$tplIdx2,$document_template['template_pdml_header_following']);
@@ -2093,13 +2163,30 @@ class Document extends Model
         //Taxes
         $mws_sum = $total_sum * 1.19;
         $mws_sum = $mws_sum - $total_sum;
-        $pdf->SetY($pdf->GetY()+5);
-        $pdf->Cell(0,10,'+19,00% MwSt.:  '.money_format('%!n', $mws_sum).EUR,0,0,'R');
+        //$pdf->SetY($pdf->GetY()+5);
+        //$pdf->Cell(0,10,'+19,00% MwSt.:  '.money_format('%!n', $mws_sum).EUR,0,0,'R');
+        //$pdf->SetY($pdf->GetY()+5);
+        //$pdf->Cell(0,10,'+19,00% MwSt.:  '.money_format('%!n', $total_taxes_sum).EUR,0,0,'R');
+
+
+        $total_taxes_sum = 0;
+        foreach ($taxes as $row)
+            {
+                if($row['sumNetto'] != 0){
+                    $pdf->SetY($pdf->GetY()+5);
+                    $pdf->Cell(0,10,'+'.$row['percent'].'% '.$row['short_name'].
+                    ' ('.money_format('%!n',$row['sumNetto']).'):  '.
+                    money_format('%!n', $row['sumTax']).EUR,0,0,'R');
+                    $total_taxes_sum =  $total_taxes_sum + $row['sumTax'];
+                }
+            }
+
+
         
         //Total brutto
         $pdf->SetY($pdf->GetY()+5);
         $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(0,10,'Summe Brutto  '.money_format('%!n', $mws_sum+$total_sum).EUR,0,0,'R');
+        $pdf->Cell(0,10,'Summe Brutto  '.money_format('%!n', $total_taxes_sum+$total_sum).EUR,0,0,'R');
         
         //Attachment page
         if(isset($tplIdx3)){
