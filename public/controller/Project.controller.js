@@ -2265,7 +2265,40 @@ sap.ui.define([
 			
 		},
 		onOverwriteProjectDocument: function(oEvent) {
-			sap.m.MessageToast.show("No ned ready ;-)");
+			
+			var documentKey = this.getView().byId('projectDocumentsList').getSelectedItem();
+			console.log(documentKey);
+			if(typeof documentKey === 'undefined' || documentKey === null || documentKey === ''){
+				var oBundle = this.getView().getModel("i18n").getResourceBundle();
+				sap.m.MessageToast.show(oBundle.getText("firstSelectDocument"));
+				
+			}else{
+				var documentModel = documentKey.data("documentModel");
+				var documentId = documentKey.data("documentId");
+				var documentNumber = documentKey.data("documentNumber");
+
+				var personId = this.getView().getModel("project").getProperty("/customer_person_id");
+
+				var oUrl = 'document/'+documentModel+'-'+documentNumber+'.pdf'
+
+				//Set busy
+				var projectPage = this.byId("projectPage");
+				projectPage.setBusy(true);
+				
+		
+				//Post to backend
+				var oModel = api.callApi(this,"Project/"+Id+"/"+documentModel+"/"+documentId+"/morph_overwrite",'','POST');
+				this.getView().setModel(oModel,"overwrite_document");
+				
+
+				var parent = this;
+				oModel.attachRequestCompleted(function(){
+					projectPage.setBusy(false);
+					parent._pdfViewer.setSource(oUrl);
+					parent._pdfViewer.setTitle("Document");
+					parent._pdfViewer.open();
+				});
+			}
 		},
 		onCreateSubprojectDocument: function(oEvent) {
 			//Preview
@@ -2319,7 +2352,38 @@ sap.ui.define([
 			
 		},
 		onOverwriteSubprojectDocument: function(oEvent) {
-			sap.m.MessageToast.show("No ned ready ;-)");
+			var documentKey = this.getView().byId('subprojectDocumentsList').getSelectedItem();
+			console.log(documentKey);
+			if(typeof documentKey === 'undefined' || documentKey === null || documentKey === ''){
+				var oBundle = this.getView().getModel("i18n").getResourceBundle();
+				sap.m.MessageToast.show(oBundle.getText("firstSelectDocument"));
+				
+			}else{
+				var documentModel = documentKey.data("documentModel");
+				var documentId = documentKey.data("documentId");
+				var documentNumber = documentKey.data("documentNumber");
+				
+				var oUrl = 'document/'+documentModel+'-'+documentNumber+'.pdf'
+
+				//Set busy
+				var subprojectPage = this.byId("subprojectPage");
+				subprojectPage.setBusy(true);
+				
+		
+				//Post to backend
+				var oModel = api.callApi(this,"Subproject/"+subprojectId+"/"+documentModel+"/"+documentId+"/morph_overwrite",'','POST');
+				this.getView().setModel(oModel,"overwrite_document");
+				
+
+				var parent = this;
+				oModel.attachRequestCompleted(function(){
+					subprojectPage.setBusy(false);
+					parent._pdfViewer.setSource(oUrl);
+					parent._pdfViewer.setTitle("Document");
+					parent._pdfViewer.open();
+				});
+			}
+			
 		},
 		onViewDocument: function (oEvent) { 
 			var selectedItem = oEvent.getSource();

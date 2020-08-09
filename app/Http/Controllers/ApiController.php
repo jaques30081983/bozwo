@@ -103,8 +103,8 @@ class ApiController extends Controller
     {
         //Hybrid letter configuration
         // Login-Eingaben auslesen
-        $hybrid_letter_username = '';
-        $hybrid_letter_password	= '';
+        $hybrid_letter_username = ''; //TODO get from global setup
+        $hybrid_letter_password	= ''; //TODO get from global setup
 
         // Zufaelligen Salz-Wert erstellen
         $hybrid_letter_salt = substr(md5(uniqid()), 0, 8);
@@ -1544,7 +1544,7 @@ class ApiController extends Controller
             }else{
                 return response()->json("{status:0}");
             }
-        }elseif($action=='morph' or $action=='morph_preview'){
+        }elseif($action=='morph' or $action=='morph_preview' or $action=='morph_overwrite'){
             //Action morph models, from / to
             
             //Get new document number
@@ -1614,9 +1614,42 @@ class ApiController extends Controller
                 $newModel['updated_at'] = Carbon::now();
 
                 if($action == 'morph'){
-                   $newModel = $relationModelName::create($newModel);
+                   //Create new document model
+                    $newModel = $relationModelName::create($newModel);
                     $newDocumentId= $newModel->id; 
+                }elseif($action == 'morph_overwrite'){
+                    //Get document model
+                    //Document
+                    $newModel = $relationModelName::find($rid);
+                    
+                    //Get document number
+                    $modelArray = $relationModelName::find($rid)->toArray();
+                    $number = $modelArray['number'];
+
+                    //Update document
+                    $data['created_user_id'] = Auth::user()->id;
+                    $data['updated_user_id'] = Auth::user()->id;
+                    $data['updated_at'] = Carbon::now();
+
+                    $relationModelName::where('id', $rid)->update($data);
+                    
+                    //Set document id
+                    $newDocumentId= $rid;
+
+                    //Create id name of table model
+                    $documentIdName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $relation));
+                    $documentIdName = $documentIdName."_id";
+                    
+                    //Create item model name
+                    $relationModelItemName = $relationModelName.'Item';
+
+                    //Document items delete
+                    $deletedRows = $relationModelItemName::where($documentIdName, $rid)->delete();
+
+
+                
                 }else{
+                    //Preview
                     $previewDocument = $newModel;
                     $newDocumentId = 0;
                 }
@@ -1669,7 +1702,7 @@ class ApiController extends Controller
                     $newItem['updated_at'] = Carbon::now();
                     
 
-                    if($action == 'morph'){
+                    if($action == 'morph' or $action == 'morph_overwrite'){
                        //Insert Subproject in db
                         $newSubprojectModel = $newModel->items()->create($newItem);
                         $newSubprojectId= $newSubprojectModel->id; 
@@ -1707,7 +1740,7 @@ class ApiController extends Controller
                         
 
                         
-                        if($action == 'morph'){
+                        if($action == 'morph' or $action == 'morph_overwrite'){
                             //Insert Materials Categories in db
                             $newSubprojectMaterialCategorieModel = $newModel->items()->create($newItem);
                             $newSubprojectCategorieId= $newSubprojectMaterialCategorieModel->id;
@@ -1744,7 +1777,7 @@ class ApiController extends Controller
                             $newItem['created_at'] = Carbon::now();
                             $newItem['updated_at'] = Carbon::now();
                             
-                            if($action == 'morph'){
+                            if($action == 'morph' or $action == 'morph_overwrite'){
                                 //Insert Materials in db
                                 $newModel->items()->create($newItem);
                             }else{
@@ -1786,7 +1819,7 @@ class ApiController extends Controller
                         
 
                         
-                        if($action == 'morph'){
+                        if($action == 'morph' or $action == 'morph_overwrite'){
                             //Insert Materials Categories in db
                             $newSubprojectResourceCategorieModel = $newModel->items()->create($newItem);
                             $newSubprojectCategorieId= $newSubprojectResourceCategorieModel->id;
@@ -1824,7 +1857,7 @@ class ApiController extends Controller
                             $newItem['created_at'] = Carbon::now();
                             $newItem['updated_at'] = Carbon::now();
                             
-                            if($action == 'morph'){
+                            if($action == 'morph' or $action == 'morph_overwrite'){
                                 //Insert Materials in db
                                 $newModel->items()->create($newItem);
                             }else{
@@ -1877,7 +1910,7 @@ class ApiController extends Controller
                         $newItem['updated_at'] = Carbon::now();
 
                         
-                        if($action == 'morph'){
+                        if($action == 'morph' or $action == 'morph_overwrite'){
                             //Insert Row in db
                             $newRowModel = $newModel->items()->create($newItem);
                             $newRowModelId= $newRowModel->id;
@@ -1912,7 +1945,7 @@ class ApiController extends Controller
                             $newItem['created_at'] = Carbon::now();
                             $newItem['updated_at'] = Carbon::now();
                             
-                            if($action == 'morph'){
+                            if($action == 'morph' or $action == 'morph_overwrite'){
                                 //Insert Row in db
                                 $newProjectResourceCategorieModel = $newModel->items()->create($newItem);
                                 $newProjectCategorieId= $newProjectResourceCategorieModel->id;
@@ -1949,7 +1982,7 @@ class ApiController extends Controller
                                 $newItem['created_at'] = Carbon::now();
                                 $newItem['updated_at'] = Carbon::now();
                                 
-                                if($action == 'morph'){
+                                if($action == 'morph' or $action == 'morph_overwrite'){
                                     //Insert Row in db
                                     $newModel->items()->create($newItem);
                                 }else{
@@ -1964,8 +1997,8 @@ class ApiController extends Controller
                         }
                     }
                 }
-                
-            }else{
+            
+            }else{ //If model project or subproject    
             //Just copy
                 //Document
                 $newModel = $modelName::find($id)->toArray();
@@ -2052,7 +2085,7 @@ class ApiController extends Controller
                 }
 
             }
-            if($action == 'morph'){
+            if($action == 'morph' or $action == 'morph_overwrite'){
                 $documentFilename = $relationModelName::documentCreate($relation,$newDocumentId,0,0);
                 return response()->json(['status' => '1', 'id' => $newDocumentId, 'number' => $number,'filename' => $documentFilename]);
                 
@@ -2068,6 +2101,7 @@ class ApiController extends Controller
                 //return response()->json([$previewItems]);
                 
             }
+
         }elseif($action=='sendEmail'){
             //Send email
             $data = $request->json()->all();
@@ -2087,8 +2121,8 @@ class ApiController extends Controller
             /**************** Settings begin **************/
 
             // Login-Eingaben auslesen
-            $username 		= '';
-            $password		= '';
+            $username 		= ''; //TODO get from global setup
+            $password		= ''; //TODO get from global setup
 
             // Zufaelligen Salz-Wert erstellen
             $salt			= substr(md5(uniqid()), 0, 8);
