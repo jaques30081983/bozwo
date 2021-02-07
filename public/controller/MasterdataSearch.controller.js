@@ -8,17 +8,6 @@ sap.ui.define([
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.bw.bozwo.controller.MasterdataSearch", {
-		/*
-		onInit: function (oEvent) {
-			// set explored app's demo model on this sample
-			//var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/supplier.json"));
-			var oModel = new sap.ui.model.json.JSONModel("/masterdatas", false);
-			this.getView().setModel(oModel);
- 
-			this.getView().bindElement("/Masterdata/Edit/0");
- 
-		}
-		*/
 		formatter: formatter,
 		onInit: function () {
 		
@@ -28,7 +17,7 @@ sap.ui.define([
 			this.getView().setModel(oViewModel, "view");
 
 		    this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-		    this._oRouter.attachRouteMatched(this.onMatch, this);
+			this._oRouter.getRoute("masterdata-search").attachMatched(this.onMatch, this);
 	
 		    this.setInitialFocus(this.byId("masterdataSearchField"));
 				

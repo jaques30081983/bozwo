@@ -26,9 +26,9 @@ use Google_Service_Calendar_Event;
 use Google_Service_Calendar_EventDateTime;
 use Google_Service_Calendar_EventReminder;
 use Google_Service_Calendar_EventReminders;
-define('GOOGLE_CALENDAR_ID', 'gggg015sq72qfncn4v5stii07s@group.calendar.google.com');
-//define('GOOGLE_CALENDAR_ID', 'primary');
 
+define('GOOGLE_CALENDAR_ID', config('app.bozwo_google_calendar_id', 'primary'));
+define('GOOGLE_CALENDAR_DEFAULT_ATTENDEE_EMAIL', config('app.bozwo_google_default_attendee_email'));
 class ApiController extends Controller
 {
     /**
@@ -103,8 +103,8 @@ class ApiController extends Controller
     {
         //Hybrid letter configuration
         // Login-Eingaben auslesen
-        $hybrid_letter_username = ''; //TODO get from global setup
-        $hybrid_letter_password	= ''; //TODO get from global setup
+        $hybrid_letter_username = config('app.bozwo_hybrid_letter_username', 'default');
+        $hybrid_letter_password	= config('app.bozwo_hybrid_letter_password', 'default');
 
         // Zufaelligen Salz-Wert erstellen
         $hybrid_letter_salt = substr(md5(uniqid()), 0, 8);
@@ -171,6 +171,7 @@ class ApiController extends Controller
                         if (array_key_exists('payment_method_id', $data_response)) {
                             $data_response['payment_method_id'] = '1';
                         }
+
                     //Request specific model of model    
                     }else{
                         $data_response = $modelName::find($id);
@@ -200,36 +201,36 @@ class ApiController extends Controller
             
         //Action    
         }elseif($action == "search"){
-            /*
-            $data = $modelName::where('first_name', 'LIKE', "%$string%")
-            ->orWhere('last_name', 'LIKE', "%$string%")
-            ->orWhere('company_name_1', 'LIKE', "%$string%")
-            ->orWhere('company_name_2', 'LIKE', "%$string%")
-            ->orWhere('zip', 'LIKE', "%$string%")
-            ->get();
-           
-            */
-            
+
+            // Parse search string (colum=searchString) in array
             parse_str($string, $search_array);
+            
+            //Parse filter string in (colum=filterString) array
             parse_str($filter, $filter_array);
             
+            //Init query on given model
             $query = $modelName::query();
             
-            
+            //Iterate over search string
             $i = 0;
             foreach ($search_array as $key => $value){
+                    //Search Documents
                     if(strpos($model, 'Document') !== false){
                         $tableName = (new $modelName)->getTable();
 
+                        //Search by given key
                         $query->orWhere("$tableName.$key", 'LIKE', "%$value%");
-                    
+
+                        //Iterate over filter string
                         foreach ($filter_array as $f_key => $f_value){
-                            $query->where($f_key, '=', "$f_value");
-                            
+                            $query->where($f_key, '=', "$f_value");   
                         }
+
+                        //Join masterdata
                         $query->join("masterdata", "$tableName.masterdata_id", "=", "masterdata.id")
                         ->select("$tableName.*", "masterdata.company_name_1", "masterdata.company_name_2", "masterdata.first_name", "masterdata.last_name");
-    
+                    
+                    //Search everything
                     }else{
                         $query->orWhere($key, 'LIKE', "%$value%");
                     
@@ -240,52 +241,22 @@ class ApiController extends Controller
                     }
 
             }
-                
-            
-      
-            //$query->whereRaw('BAZDMEG ' );
-            /*
-                if(isset($search_term))
-                {
-                    $search_terms = explode(' ', $search_term);
-                    
-                    $fields = array('id', 'title', 'case');
-                    
-                    $cases = $cases->where(function($q) use ($search_terms, $fields){
-                        foreach ($search_terms as $term)
-                        {
-                            foreach ($fields as $field)
-                            {
-                                $q->orWhere($field, 'LIKE', '%'. $term .'%');
-                            }
-                            
-                        }
-                    });
-                        
-                }
-                
-                if (isset($categoryID))
-                {
-                    $cases = $cases->where('category_ID','=', $categoryID);
-                    
-                }
-                
-                if (isset($cityID))
-                {
-                    $cases = $cases->where('city_ID','=', $cityID);
-                    
-                }
-                
-                */
-                
+            if(strpos($model, 'Document') !== false or strpos($model, 'Project') !== false){
+                //Search also by masterdata name
+                $query->orWhereHas('masterdata', function ($query) use ($value) {
+                    $query->where('first_name', 'LIKE', "%{$value}%")
+                    ->orWhere('last_name', 'LIKE', "%{$value}%")
+                    ->orWhere('company_name_1', 'LIKE', "%{$value}%")
+                    ->orWhere('company_name_2', 'LIKE', "%{$value}%")
+                    ->orWhere('zip', 'LIKE', "%{$value}%");
+                });
+            }
 
-            
+            //Get data with build query
             $data_response = $query->get();
-            //$data_response = $query->toSql();
-            //$data_response = $query->getBindings();
-           
-            
+
             return response()->json($data_response);
+
         }elseif($action == "upcomingProjects"){
             // get the current time
             $current = Carbon::now();
@@ -990,9 +961,9 @@ class ApiController extends Controller
         }elseif($action == "hybridLetterBalance"){
          
             // SOAP-Schnittstelle oeffnen
-            $oekopost= new SoapClient('https://www.oekopost.de/soap/?wsdl');
+            $oekopost = new SoapClient('https://www.oekopost.de/soap/?wsdl');
             $result = $oekopost->getAccountBalance($hybrid_letter_username, $hybrid_letter_passwordHash, $hybrid_letter_salt);
-					
+            
             return response()->json($result);
         }elseif($action == "allToGoogleCalendar"){
             //Get incomplete projects
@@ -1005,7 +976,7 @@ class ApiController extends Controller
                 //Prepare attendees
                 $attendee_emails = array();
                 if($data['attendees'] == ''){
-                    array_push($attendee_emails,array('email'=>'laemmle@bigwood.de'));
+                    array_push($attendee_emails,array('email'=>GOOGLE_CALENDAR_DEFAULT_ATTENDEE_EMAIL));
                 }else{
                     $attendees = explode(',', $data['attendees']);
                     
@@ -1162,7 +1133,7 @@ class ApiController extends Controller
             	//Prepare attendees
             	$attendee_emails = array();
             	if($data['attendees'] == ''){
-            		//array_push($attendee_emails,array('email'=>'laemmle@bigwood.de'));
+            		//array_push($attendee_emails,array('email'=>GOOGLE_CALENDAR_DEFAULT_ATTENDEE_EMAIL));
             	}else{
             		$attendees = explode(',', $data['attendees']);
             		
@@ -1425,8 +1396,11 @@ class ApiController extends Controller
                 $data = $request->json()->all();
                 $data['created_user_id'] = Auth::user()->id;
                 $data['updated_user_id'] = Auth::user()->id;
-                $data['created_at'] = Carbon::now();
-                $data['updated_at'] = Carbon::now();
+
+                $current = Carbon::now();
+                
+                $data['created_at'] = $current;
+                $data['updated_at'] = $current;
                 
                 if(isset($data['number_object_id'])){
                 	$number = 'App\\NumberObject'::getNumber($data['number_object_id']);
@@ -1472,7 +1446,7 @@ class ApiController extends Controller
                 	//Prepare attendees
                 	$attendee_emails = array();
                 	if($data['attendees'] == ''){
-                		//array_push($attendee_emails,array('email'=>'laemmle@bigwood.de'));
+                		//array_push($attendee_emails,array('email'=>GOOGLE_CALENDAR_DEFAULT_ATTENDEE_EMAIL));
                 	}else{
                 		$attendees = explode(',', $data['attendees']);
                 		
@@ -2121,21 +2095,22 @@ class ApiController extends Controller
             /**************** Settings begin **************/
 
             // Login-Eingaben auslesen
-            $username 		= ''; //TODO get from global setup
-            $password		= ''; //TODO get from global setup
+            $hybrid_letter_username = config('app.bozwo_hybrid_letter_username', 'default');
+            $hybrid_letter_password	= config('app.bozwo_hybrid_letter_password', 'default');
+
 
             // Zufaelligen Salz-Wert erstellen
-            $salt			= substr(md5(uniqid()), 0, 8);
+            $salt = substr(md5(uniqid()), 0, 8);
 
             // Passwort-Hash generieren
-            $passwordHash	= md5(md5($password) . $salt);
+            $passwordHash = md5(md5($hybrid_letter_password) . $salt);
 
             // SOAP-Schnittstelle oeffnen
-            $oekopost 		= new SoapClient('https://www.oekopost.de/soap/?wsdl');
+            $oekopost = new SoapClient('https://www.oekopost.de/soap/?wsdl');
 
             
-            $filename     = base_path().'/spool/'.$data['letterAttachments'][0]['fileName'];  // binary file to send
-            $filetype     = "PDF";  // e.g. HTML, DOC, PDF, etc.
+            $filename = base_path().'/spool/'.$data['letterAttachments'][0]['fileName'];  // binary file to send
+            $filetype = "PDF";  // e.g. HTML, DOC, PDF, etc.
                           
             $v_country_code = $data['customer_country_code'];
 
@@ -2168,7 +2143,7 @@ class ApiController extends Controller
             $dataHash 	= md5($dataPDF);
                                  
             // submitPDFLetter-Funktion der Schnittstelle aufrufen
-            $result = $oekopost->submitPDFLetter($username, $passwordHash, $salt,
+            $result = $oekopost->submitPDFLetter($hybrid_letter_username, $passwordHash, $salt,
                                                 $dataPDF, $dataHash,
                                                 time(), // Brief sofort senden
                                                 $letter_color,

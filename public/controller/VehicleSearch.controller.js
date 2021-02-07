@@ -13,8 +13,9 @@ sap.ui.define([
 			});
 			this.getView().setModel(oViewModel, "view");
 
-		    this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-		    this._oRouter.attachRouteMatched(this.onMatch, this);
+			this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			this._oRouter.getRoute("vehicle-search").attachMatched(this.onMatch, this);
+	
 	
 		    this.setInitialFocus(this.byId("vehicleSearchField"));
 				

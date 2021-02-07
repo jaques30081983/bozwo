@@ -458,10 +458,10 @@
 										
 										</t:template>
 									</t:Column>
-									<t:Column width="8rem">
+									<t:Column width="12rem">
 										<Label text="Tax"/>
 										<t:template>
-											<Select width="100%" items="{path:'taxes>/', templateShareable: false}"  forceSelection="false"	selectedKey="{documentItems>tax_id}" visible="{= ${documentItems>type} === 0 ? false : true}">
+											<Select change="onChangeItemTax" width="100%" items="{path:'taxes>/', templateShareable: false}"  forceSelection="false"	selectedKey="{documentItems>tax_id}" visible="{= ${documentItems>type} === 0 ? false : true}">
 												<core:Item key="{taxes>id}" text="{taxes>name}" />
 											</Select>	
 											
@@ -489,7 +489,7 @@
 									<t:rowActionTemplate>
 								        <t:RowAction>
 								            
-										<t:RowActionItem type="Delete" press="onDocumentResourcesDeletePress"></t:RowActionItem>
+										<t:RowActionItem type="Delete" press="onDocumentItemsDeletePress"></t:RowActionItem>
 									    
 									</t:RowAction>
 									

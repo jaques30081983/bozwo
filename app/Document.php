@@ -1975,8 +1975,13 @@ class Document extends Model
                 //Count resources
                 $total_resources_discount = $subproject_resources_discount_sum + $total_resources_discount;
                 
-                
-                
+                //Create subproject discount text
+                if($row->discount == 0) {
+                    $subprojectDiscountText = '';
+                }else{
+                     $subprojectDiscountText = '(R.'.$row->discount.'% '.money_format('%!n', $subproject_discount_sum).EUR.')';             
+                }
+               
                 //Write
                 $pdf->SetWidths(array(12,45,45,40,30));
             	$pdf->SetAligns(array('L','L','L','L','R'));
@@ -1985,7 +1990,7 @@ class Document extends Model
                     $row->pos.'',    
                     $name,
                     substr($row->start_date_time, 0, -9).' - '.substr($row->end_date_time, 0, -9),
-                	'(R.'.$row->discount.'% '.money_format('%!n', $subproject_discount_sum).EUR.')',
+                	$subprojectDiscountText,
                     '('.money_format('%!n', $subproject_sum).EUR.')'
                 ),$tplIdx2,$document_template['template_pdml_header_following'],$row->type);
                 
@@ -2188,6 +2193,49 @@ class Document extends Model
         $pdf->SetFont('Arial', 'B', 10);
         $pdf->Cell(0,10,'Summe Brutto  '.money_format('%!n', $total_taxes_sum+$total_sum).EUR,0,0,'R');
         
+
+        //Payment terms
+        if($document['payment_term_id'] != 0){        
+            //Get
+            $paymentTerm = 'App\\PaymentTerm'::find($document['payment_term_id']);
+            
+            //Create date
+            $futureDate = date('Y-m-d', strtotime($document['created_at']. ' + ' .$paymentTerm['payment_target_net'] .' days'));
+
+            //Draw Line
+            $pdf->SetY($pdf->GetY()+15);
+            $pdf->SetLineWidth(0.1);
+            $pdf->Line(100, $pdf->GetY(), 190, $pdf->GetY());
+
+            //Write description
+            $pdf->SetY($pdf->GetY()+5);
+            $pdf->SetFont('Arial', 'B', 10);
+            $pdf->Cell(0,10,'Zahlungskonditionen:',0,0,'R');
+            
+
+            //Replace placeholder fo date
+            $pattern = array(
+                '/{future_date}/'
+            );
+            
+            $replacement = array(
+                $futureDate
+            );
+            
+        
+            
+            //Replace text on first side
+            $paymentTermText = preg_replace(
+                $pattern,
+                $replacement ,$paymentTerm['description']);
+
+            $pdf->SetY($pdf->GetY()+5);
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(0,10,$paymentTermText,0,0,'R');
+            
+        }
+        
+
         //Attachment page
         if(isset($tplIdx3)){
         $pdf->AddPage($document_template['orientation'],$document_template['format'],$document_template['rotate']);

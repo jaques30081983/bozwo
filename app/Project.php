@@ -11,6 +11,11 @@ class Project extends Model
 	{
 		return $this->hasMany('App\Subproject', 'project_id');
 	}
+
+	public function masterdata()
+    {
+        return $this->belongsTo('App\Masterdata'::class, 'customer_id');
+    }
 	
 	public function ProjectResource()
 	{

@@ -31,20 +31,12 @@ sap.ui.define([
 
 	var PageController = Controller.extend("sap.ui.bw.bozwo.controller.Inventory", {	
 		onInit: function () {
+			this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			this._oRouter.getRoute("inventory").attachMatched(this.onMatch, this);
 		
-
-
-		    this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-		    this._oRouter.attachRouteMatched(this.onMatch, this);
-	
-	
-				
 		},	
 		pressDialog: null,
 		onMatch: function() {
-			
-
-			
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.loadData("/api/InventoryCategory/0/0/0/tree", false);
 			this.getView().setModel(oModel,"inventoryTree");
@@ -68,7 +60,6 @@ sap.ui.define([
 				Tree.setBusy(false);
 			});
 			
-
 		},
 	    onLiveChange: function(event) {
 	        const query = event.getParameter("newValue").trim();
@@ -633,7 +624,7 @@ sap.ui.define([
 				Id=0;
 				requestMethod =  'post';
 				this.getView().getModel("inventory").setProperty("/category_id", 0);
-				this.getView().getModel("inventory").setProperty("/status", 0);
+				//this.getView().getModel("inventory").setProperty("/status", 0);
 				this.getView().getModel("inventory").setProperty("/number_object_id", 11);
 			}
 			

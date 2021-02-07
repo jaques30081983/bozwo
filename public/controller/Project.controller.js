@@ -1785,11 +1785,11 @@ sap.ui.define([
 						parent.getView().setModel(oModel1,"subprojectMaterial");
 
 						var oBindingModel1 = new sap.ui.model.Binding(oModel1, "/", oModel1.getContext("/"));
-						oBindingModel1.attachChange(function(){
+						oBindingModel1.attachChange(function(oEvent){
 							console.log('Subproject Material Model1 changed!');
 							subprojectDataChanged = true;
 						});
-						
+
 					});
 
 
@@ -2708,6 +2708,30 @@ sap.ui.define([
 			}
 
 			
+		},onChangeItemTax: function(oEvent){
+			const sModelName = oEvent.getSource().getSelectedItem().aAPIParentInfos[0].parent.mBindingInfos.selectedKey.parts[0].model;
+			const sPath = oEvent.getSource().getSelectedItem().getBindingContext(sModelName).getPath();
+			const oKey = oEvent.oSource.getSelectedItem().getKey()
+			const oModel = this.getView().getModel(sModelName);
+			const oProperty = oModel.getProperty(sPath);
+			
+			//Only if it is a group
+			if(oProperty.type === 0){
+				//Iterate over group and set items tax_id
+				for(let i = 0; i < oProperty['items'].length; i++) {
+					oModel.setProperty(sPath+'/items/'+i+'/tax_id', oKey);
+				}
+
+
+				//Deselect choise on group select
+				oEvent.getSource().setSelectedItem(null);
+				oModel.setProperty(sPath+'/tax_id', 0);
+
+				//Refresh the changed model
+				oModel.refresh(true); 
+			}
+			
+
 		},handleSelectionFinish: function(oEvent) {
 			//Attendees
 			var selectedItems = oEvent.getParameter("selectedItems");

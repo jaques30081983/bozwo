@@ -10,8 +10,10 @@ sap.ui.define([
  
 		onInit : function (evt) {
 			
-
-			this.loadDashboard();
+			this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			this._oRouter.getRoute("index").attachMatched(this.loadDashboard, this);
+			this._oRouter.getRoute("overview").attachMatched(this.loadDashboard, this);
+	
 		},
 		loadDashboard : function (oEvent){
 			var oToday = new Date();

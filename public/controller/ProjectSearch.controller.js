@@ -7,15 +7,10 @@ sap.ui.define([
 	var oArgs;
 	var PageController = Controller.extend("sap.ui.bw.bozwo.controller.ProjectSearch", {	
 		onInit: function () {
-		
 
-
-		    this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			this._oRouter.attachRouteMatched(this.onMatch, this);
+		    this._oRouter = sap.ui.core.UIComponent.getRouterFor(this).getRoute('project-search');
+			this._oRouter.attachMatched(this.onMatch, this);
 			
-			//var oRouter = this.getOwnerComponent().getRouter();
-			//oRouter.getRoute("document").attachMatched(this._onRouteMatchedEdit, this);
-	
 		    this.setInitialFocus(this.byId("projectSearchField"));
 				
 		},		
@@ -36,9 +31,9 @@ sap.ui.define([
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.attachRequestSent(function(){busyDialog.open();});
 				
-				if(oArgs.model == "upcomingProjects"){
+				if(oArgs.model === "upcomingProjects"){
 					oModel.loadData("/api/Project/0/0/0/upcomingProjects", false);
-				}else if(oArgs.model == "notInvoicedProjects"){
+				}else if(oArgs.model === "notInvoicedProjects"){
 					oModel.loadData("/api/Project/0/0/0/notInvoicedProjects", false);
 
 				}else{

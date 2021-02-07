@@ -1,25 +1,14 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/bw/bozwo/util/formatter',
 		'sap/ui/bw/bozwo/util/api',
-		'sap/ui/model/Filter'
-	], function(jQuery, Controller, JSONModel, formatter, api, Filter) {
+		'sap/ui/model/Filter',
+		'sap/ui/core/routing/History'
+	], function(Controller, JSONModel, formatter, api, Filter, History) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.bw.bozwo.controller.DocumentSearch", {
-		/*
-		onInit: function (oEvent) {
-			// set explored app's demo model on this sample
-			//var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/supplier.json"));
-			var oModel = new sap.ui.model.json.JSONModel("/documents", false);
-			this.getView().setModel(oModel);
- 
-			this.getView().bindElement("/Document/Edit/0");
- 
-		}
-		*/
 		formatter: formatter,
 		onInit: function () {
 		
@@ -28,12 +17,12 @@ sap.ui.define([
 			});
 			this.getView().setModel(oViewModel, "view");
 
-		    this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-		    this._oRouter.attachRouteMatched(this.onMatch, this);
+			this._oRouter = sap.ui.core.UIComponent.getRouterFor(this).getRoute('document-search');
+			this._oRouter.attachMatched(this.onMatch, this);
 	
 		    this.setInitialFocus(this.byId("documentSearchField"));
 				
-		},		
+		},	
 		onMatch: function(oEvent) {
             var sQuery = this.byId("documentSearchField").getValue();
             
@@ -59,32 +48,17 @@ sap.ui.define([
 			this.getView().setModel(oModel0,"types");
 			
 			//Search
-			if(sQuery == ""){
+			if(sQuery === ""){
 				console.log("onMatch triggered",oDocumentModel);
-				var oBundle = this.getView().getModel("i18n").getResourceBundle();
-				var busyDialog = new sap.m.BusyDialog({
-
-		  			text:oBundle.getText("loadingData")
-
-		  			});
-				
-				var oModel = new sap.ui.model.json.JSONModel();
-				oModel.attachRequestSent(function(){busyDialog.open();});
-				if(typeof oDocumentModel !== "undefined"){
-					oModel.loadData("/api/"+oDocumentModel+"/0/0/0/latest/15", false);
-				}
-				
-				
-				oModel.attachRequestCompleted(function(){busyDialog.close();});
-				oModel.attachRequestFailed(function(){sap.m.MessageToast.show(oBundle.getText("sessionEnded"));sap.m.URLHelper.redirect("/login");});
-				
+	
+				var oModel = api.callApi(this,oDocumentModel+"/0/0/0/latest/15", null,'GET');
 				this.getView().setModel(oModel);
 			}else{
 				this.onSearchDocuments();
 			}
 			
 
-			    },
+		},
 		setInitialFocus: function(control) {
 		      this.getView().addEventDelegate({
 		        onAfterShow: function() {
@@ -329,6 +303,20 @@ sap.ui.define([
 				sap.m.MessageToast.show("No new item was selected.");
 			}
 			oEvent.getSource().getBinding("items").filter([]);
+		},
+		onNavBack: function () {
+			
+			var oHistory = History.getInstance();
+			var sPreviousHash = oHistory.getPreviousHash();
+
+			if (sPreviousHash !== undefined) {
+				window.history.go(-1);
+			} else {
+				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+				oRouter.navTo("overview", true);
+			}
+
+			
 		}
 
 	});

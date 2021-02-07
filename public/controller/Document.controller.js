@@ -2141,13 +2141,13 @@ sap.ui.define([
 			//Send Letter
 			letter.onLetterSend(this);
 
-		},onDocumentResourcesDeletePress: function(oEvent) {
+		},onDocumentItemsDeletePress: function(oEvent) {
 			var oRow = oEvent.getParameter("row");
-			var oContext = oRow.getBindingContext("documentResource");
-			var oModel = this.getView().getModel("documentResource");
+			var oContext = oRow.getBindingContext("documentItems");
+			var oModel = this.getView().getModel("documentItems");
 			var sPath = oContext.getPath();
 			
-			var oTreeTable = this.byId("documentResourceTreeTable");
+			var oTreeTable = this.byId("documentItemsTreeTable");
             var sParts = sPath.split('/');
             var oData = oModel.getData();
 						
@@ -2171,13 +2171,14 @@ sap.ui.define([
 				});
 			}
 			
-			//Delete Cat only if empty
+			//Delete Top category only if empty
 			if(oContext.getProperty("type") == 0){
 	            //console.log(oData[sParts[1]]["items"].length);
-	            if(oData[sParts[1]]["items"].length === 0){
+	            if(!oData[sParts[1]].hasOwnProperty('items')){
 		            	//Delete from DB
 						if(oContext.getProperty("id") != 0){
-							api.callApi(this,'DocumentResource/'+oContext.getProperty("id"),'','DELETE');
+							api.callApi(this, oDocumentModel+'Item/'+oContext.getProperty("id"),'','DELETE');
+							console.log('Deleted Subproject Cat from DB, id:', oContext.getProperty("id"), oDocumentModel)
 						}
 						
 		            	//Delete from MODEL
@@ -2202,17 +2203,71 @@ sap.ui.define([
 						}
 						oModel.setData(oData);
 						oModel.refresh(true); 
-	            	}
-			//Delete Item
+	            	}else{
+						sap.m.MessageToast.show('Top Category not empty.');
+					}
+			//Delete Category if empty
 			}else if(oContext.getProperty("type") == 1){
+	            //console.log(oData[sParts[1]]["items"].length);
+	            if(oData[sParts[1]]["items"][sParts[3]]["items"].length === 0){
+		            	//Delete from DB
+						if(oContext.getProperty("id") != 0){
+							api.callApi(this, oDocumentModel+'Item/'+oContext.getProperty("id"),'','DELETE');
+							console.log('Deleted Cat from DB, id:', oContext.getProperty("id"), oDocumentModel)
+						}
+						
+		            	//Delete from MODEL
+						oData[sParts[1]]["items"].splice(sParts[3], 1);
+						if(oData[sParts[1]]["items"].length === 0){
+							delete oData[sParts[1]]["items"];
+						}
+						oModel.setData(oData);
+	
+
+						//Renumber categories and items
+						if(oData[sParts[1]].length === 0){
+						var count1 = 0;
+						var oData = oModel.getData();
+						for(var i = 0; i < oData.length; i++) {
+						    //Categories
+						    count1++;
+						    oData[i]['pos'] = count1;
+						    
+						    //Items
+						    var count2 = 0;
+						    var oItems = sortByKey(oData[i]['items'],'pos');
+						    for(var j = 0; j < oItems.length; j++) {
+						    	count2++;
+						    	oModel.setProperty('/'+i+'/items/'+j+'/pos', count1+'.'+count2);
+						    }  
+						}
+						oModel.setData(oData);
+						oModel.refresh(true); 
+					}
+
+	            	}else{
+						sap.m.MessageToast.show('Category not empty.');
+					}
+			//Delete Item
+			}else if(oContext.getProperty("type") == 2){
 				//Delete from DB
 				if(oContext.getProperty("id") != 0){
-					api.callApi(this,'DocumentResource/'+oContext.getProperty("id"),'','DELETE');
+					api.callApi(this,oDocumentModel+'Item/'+oContext.getProperty("id"),'','DELETE');
+					console.log('Deleted Item from DB, id:', oContext.getProperty("id"),oDocumentModel+'Item/')
+						
 				}
 				//Delete from MODEL
-	            oData[sParts[1]]["items"].splice(sParts[3], 1);
+				if(sParts.length === 4){
+					oData[sParts[1]]["items"].splice(sParts[3], 1);
+				}else if(sParts.length === 6){
+					oData[sParts[1]]["items"][sParts[3]]["items"].splice(sParts[5], 1);
+				}
+				
+				
 	            oModel.setData(oData);
-	            
+				
+				console.log('sParts:',sParts)
+				
 				//Renumber Items
 				var oProperty = sortByKey(oModel.getProperty("/"),'pos');
 				
@@ -2367,6 +2422,30 @@ sap.ui.define([
 			console.log(oAttendees);
 			console.log(oAttendeeEmails);
 			//console.log(messageText);
+		},onChangeItemTax: function(oEvent){
+			const sModelName = oEvent.getSource().getSelectedItem().aAPIParentInfos[0].parent.mBindingInfos.selectedKey.parts[0].model;
+			const sPath = oEvent.getSource().getSelectedItem().getBindingContext(sModelName).getPath();
+			const oKey = oEvent.oSource.getSelectedItem().getKey()
+			const oModel = this.getView().getModel(sModelName);
+			const oProperty = oModel.getProperty(sPath);
+			console.log(oProperty.type);
+			//Only if it is a group
+			if(oProperty.type === 1){
+				//Iterate over group and set items tax_id
+				for(let i = 0; i < oProperty['items'].length; i++) {
+					oModel.setProperty(sPath+'/items/'+i+'/tax_id', oKey);
+				}
+
+
+				//Deselect choise on group select
+				oEvent.getSource().setSelectedItem(null);
+				oModel.setProperty(sPath+'/tax_id', 0);
+
+				//Refresh the changed model
+				oModel.refresh(true); 
+			}
+			
+
 		},alphanumericSorter: function(a, b){
 			var reA = /[^a-zA-Z]/g;
 			var reN = /[^0-9]/g;

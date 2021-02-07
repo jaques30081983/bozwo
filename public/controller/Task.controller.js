@@ -21,8 +21,9 @@ sap.ui.define([
 			]);
 			this.getView().setModel(oModel0,"statuses");
 
-		    this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-		    this._oRouter.attachRouteMatched(this.onMatch, this);
+			
+			this._oRouter = sap.ui.core.UIComponent.getRouterFor(this).getRoute('task');
+		    this._oRouter.attachMatched(this.onMatch, this);
 	
 		    this.setInitialFocus(this.byId("taskSearchField"));
 		    
@@ -34,7 +35,6 @@ sap.ui.define([
 		},		
 		onMatch: function() {
 			var sQuery = this.byId("taskSearchField").getValue();
-	
 			if(sQuery == ""){
 				var oBundle = this.getView().getModel("i18n").getResourceBundle();
 				var busyDialog = new sap.m.BusyDialog({

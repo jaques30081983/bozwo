@@ -642,10 +642,10 @@
 										
 										</t:template>
 									</t:Column>
-									<t:Column width="8rem">
+									<t:Column width="12rem">
 										<Label text="Tax"/>
 										<t:template>
-											<Select width="100%" items="{path:'taxes>/', templateShareable: true}"  forceSelection="false"	selectedKey="{projectResource>tax_id}" visible="{= ${projectResource>type} === 0 ? false : true}">
+											<Select change="onChangeItemTax" width="100%" items="{path:'taxes>/', templateShareable: true}"  forceSelection="false"	selectedKey="{projectResource>tax_id}" >
 												<core:Item key="{taxes>id}" text="{taxes>name}" />
 											</Select>	
 											
@@ -1414,10 +1414,10 @@
 										
 										</t:template>
 									</t:Column>
-									<t:Column width="8rem">
+									<t:Column width="12rem">
 										<Label text="Tax"/>
 										<t:template>
-											<Select width="100%" items="{path:'taxes>/', templateShareable: true}"  forceSelection="false"	selectedKey="{subprojectMaterial>tax_id}" visible="{= ${subprojectMaterial>type} === 0 ? false : true}">
+											<Select change="onChangeItemTax" width="100%" items="{path:'taxes>/', templateShareable: true}"  forceSelection="false"	selectedKey="{subprojectMaterial>tax_id}" >
 												<core:Item key="{taxes>id}" text="{taxes>name}" />
 											</Select>	
 											
@@ -1572,10 +1572,10 @@
 										
 										</t:template>
 									</t:Column>
-									<t:Column width="8rem">
+									<t:Column width="12rem">
 										<Label text="Tax"/>
 										<t:template>
-											<Select width="100%" items="{path:'taxes>/', templateShareable: true}"  forceSelection="false"	selectedKey="{subprojectResource>tax_id}" visible="{= ${subprojectResource>type} === 0 ? false : true}">
+											<Select change="onChangeItemTax" width="100%" items="{path:'taxes>/', templateShareable: true}"  forceSelection="false"	selectedKey="{subprojectResource>tax_id}" >
 												<core:Item key="{taxes>id}" text="{taxes>name}" />
 											</Select>	
 											

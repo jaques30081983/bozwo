@@ -18,6 +18,11 @@ class DocumentOffer extends Model
         return $this->hasMany('App\DocumentOfferItem')->orderByRaw($orderAlphanumeric);
     }
 
+    public function masterdata()
+    {
+        return $this->belongsTo('App\Masterdata'::class);
+    }
+
     public static function documentPreview($model,$id,$relation,$rid)
     {
         $data_response = 'App\\Document'::createPdf($model,$id,$relation,$rid,'offer','preview');
