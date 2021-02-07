@@ -1672,6 +1672,7 @@ sap.ui.define([
 					oModel1.loadData("/api/Project/"+selectedItem.data("id")+"/ProjectResource", false);
 					
 					var oModel2 = new sap.ui.model.json.JSONModel();
+					
 					oModel2.loadData("/api/Project/"+selectedItem.data("id")+"/ResourceDisposition/0/dispositions", false);
 					
 					
