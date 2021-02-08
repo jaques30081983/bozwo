@@ -38,6 +38,7 @@
 					<ObjectListItem
 						title="{name}"
 						showMarkers="true"
+						highlight="{= ${status} === 1 ? 'Warning' : ''}{= ${status} === 2 ? 'Success' : ''}{= ${status} === 3 ? 'Error' : ''}"
 						type="Navigation"
 						app:projectId="{id}"
 						press="onPress">
