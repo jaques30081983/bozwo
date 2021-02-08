@@ -2759,10 +2759,6 @@ sap.ui.define([
 				oAttendeeEmails += selectedItems[i].data("email");
 			}
 
-			
-			//this.getView().getModel("pc").setProperty("/attendees", oAttendees);
-			//this.getView().getModel("pc").setProperty("/attendee_emails", oAttendeeEmails);
-			
 			if(this.getView().getModel("project") != undefined){
 				this.getView().getModel("project").setProperty("/attendees", oAttendees);
 				this.getView().getModel("project").setProperty("/attendee_emails", oAttendeeEmails);
