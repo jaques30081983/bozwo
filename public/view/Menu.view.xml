@@ -101,6 +101,11 @@
 				<ToolbarSpacer/>
 					<Title id="header_title" text="" />
 				<ToolbarSpacer/>
+				<Switch state="true" customTextOn=" " customTextOff=" " change="onSwitchDark">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Switch>
 				<Button icon="sap-icon://email"
 						press="onButtonEmail"/>
 				

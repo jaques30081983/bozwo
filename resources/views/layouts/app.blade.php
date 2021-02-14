@@ -8,7 +8,7 @@
 		<script
 		id="sap-ui-bootstrap"
 		src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_belize"
+		data-sap-ui-theme="sap_fiori_3_dark"
 		data-sap-ui-libs="sap.m"
 		data-sap-ui-compatVersion="edge"
 		sap-ui-xx-componentPreload=off
@@ -18,7 +18,11 @@
 		}'>
       </script>
       
-
+	  <style>
+		body {
+		background-color: #1c2228;
+		}
+		</style>
 
 		@yield('header')
     </head>

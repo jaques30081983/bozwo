@@ -42,6 +42,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
             
  
 		},
+			onSwitchDark: function(oEvent){
+				oEvent.getParameter("state") ? 
+				sap.ui.getCore().applyTheme("sap_fiori_3_dark") : 
+				sap.ui.getCore().applyTheme("sap_belize");
+			},
 			onButtonLogout: function(){
 				document.getElementById('logout-form').submit();
 			},
